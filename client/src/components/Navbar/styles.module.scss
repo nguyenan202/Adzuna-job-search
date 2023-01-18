@@ -1,0 +1,151 @@
+.container {
+    border-bottom: 1px solid #f2f2f2;
+    padding: 0.5rem 3rem;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    max-height: 100px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+
+    .logo {
+        margin-right: 2rem;
+    }
+
+    .item {
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-self: center;
+        cursor: pointer;
+
+        &:hover {
+            color: #1677f6;
+            opacity: 0.8;
+        }
+        
+        .paragraph {
+            color: inherit;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0;
+        }
+    }
+
+    .info {
+        display: flex;
+        align-items: center;
+        height: fit-content;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+
+        &:hover {
+            opacity: 0.9;
+        }
+    
+        .avatar {
+            margin-right: 0.5rem;
+        }
+
+        .fullName {
+            margin: 0;
+            font-weight: 500;
+            font-size: 1rem;
+
+            .arrow {
+                margin-left: 0.5rem;
+            }
+        }
+    }
+
+    .btn_menu {
+        display: none;
+    }
+
+    .option {
+        width: 100%;
+        position: absolute;
+        top: calc(100%);
+        right: 0;
+        padding: 0.5rem 0;
+        display: block;
+        animation: optionMove 0.3s ease;
+        border: 1px solid #ccc;
+        border-end-end-radius: 10px;
+        border-end-start-radius: 10px;
+
+        .sub_option {
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-top: .5px solid #ccc;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #ccc;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 992px) {
+
+    .container {
+        padding: 0.5rem 2rem;
+
+        .option,
+        .info {
+            display: none;
+        }
+
+        .btn_menu {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            height: fit-content;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+    }
+}
+
+@media (min-width: 0px) and (max-width: 692px) {
+
+    .container {
+        padding: 0.5rem 1.5rem;
+
+        .item {
+            display: none;
+        }
+    }
+}
+
+@keyframes optionMove {
+    0% {
+        opacity: 0;
+        top: calc(100% - 1.5rem);
+    }
+    100% {
+        opacity: 1;
+        top: 100%;
+    }
+}
+
+@keyframes iconMove {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(-90deg);
+    }
+}

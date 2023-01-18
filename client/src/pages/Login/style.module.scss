@@ -1,0 +1,95 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+
+    .box {
+        padding: 2rem;
+        border: 1px solid #ccc;
+        max-width: 38rem;
+        background-color: #fff;
+
+        .logo {
+            margin-top: 1rem;
+        }
+
+        .head {
+            margin: 1rem 0;
+        }
+
+        .input {
+            article {
+                font-size: 1.2rem;
+            }
+
+            input {
+                border-radius: 4px;
+                font-size: 1.1rem;
+            }
+
+            .field {
+                margin: 0.5rem 0;
+            }
+
+            .btn_login_register {
+                width: 100%;
+                margin: 0.5rem 0;
+                padding: 0.5rem 0;
+                height: auto;
+            }
+        }
+
+        .button {
+            .btn {
+                width: 100%;
+                margin: 0.5rem 0;
+                padding: 0.5rem 0;
+                height: auto;
+            }
+
+            .btn_google {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #ea4335;
+                color: #fff;
+                border: none;
+                span {
+                    margin-left: 0.3rem;
+                }
+                &:hover {
+                    opacity: 0.9;
+                }
+            }
+
+            .btn_facebook {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #365899;
+                color: #fff;
+                border: none;
+                span {
+                    margin-left: 0.3rem;
+                }
+                &:hover {
+                    opacity: 0.9;
+                }
+            }
+
+            .another_choise {
+                text-align: center;
+            }
+        }
+    }
+}
+
+.heading {
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.slogan {
+    opacity: 0.9;
+}
