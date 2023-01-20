@@ -5,7 +5,7 @@ import RoomChat from './roomChat'
 
 const Message = sequelize.define('Message', {
     id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
@@ -13,7 +13,7 @@ const Message = sequelize.define('Message', {
         type: DataTypes.TEXT
     },
     userId: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         references: {
             model: User,
             key: 'id'

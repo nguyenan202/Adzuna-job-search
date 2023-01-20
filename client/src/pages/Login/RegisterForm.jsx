@@ -5,6 +5,10 @@ import styles from './style.module.scss';
 import { useState } from "react";
 import * as yup from 'yup';
 import { useFormik } from 'formik'
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setLogin } from "../../redux/store";
 
 const iconStyle = { marginRight: '0.5rem', fontSize: '1.2rem', cursor: 'pointer' }
 
@@ -49,8 +53,10 @@ const initValuesRegister = {
 const RegisterForm = () => {
 
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const [message, setMessage] = useState(null);
 
     const tokenTheme = theme.useToken().token;
+    const navigate = useNavigate();
 
     const togglePassword = () => {
         setIsShowPassword(!isShowPassword)
@@ -59,8 +65,20 @@ const RegisterForm = () => {
     const formik = useFormik({
         initialValues: initValuesRegister,
         validationSchema: registerSchema,
-        onSubmit: (values, onSubmitProps) => {
-            console.log(values);
+        onSubmit: async (values, onSubmitProps) => {
+            try {
+
+                const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, values)
+
+                const data = await response.data;
+
+                setMessage(data.message)
+            } catch (err) {
+                const msg = err.response.data.message;
+                if (msg === 'Email already exists.') {
+                    onSubmitProps.setFieldError('email', msg)
+                }
+            }
         }
     })
 
@@ -77,7 +95,7 @@ const RegisterForm = () => {
                 <Row justify='space-between' style={{ width: '100%' }}>
                     <Col xs={{ span: 24 }} sm={{ span: 11 }} className={styles.field}>
                         <Typography
-                            style={invalidLastName ? {color: 'red'} : {color: '#000'}}
+                            style={invalidLastName ? { color: 'red' } : { color: '#000' }}
                         >
                             Họ
                         </Typography>
@@ -95,7 +113,7 @@ const RegisterForm = () => {
                     </Col>
                     <Col xs={{ span: 24 }} sm={{ span: 11 }} className={styles.field}>
                         <Typography
-                            style={invalidFirstName ? {color: 'red'} : {color: '#000'}}
+                            style={invalidFirstName ? { color: 'red' } : { color: '#000' }}
                         >
                             Tên
                         </Typography>
@@ -114,7 +132,7 @@ const RegisterForm = () => {
                 </Row>
                 <Col span={24} className={styles.field}>
                     <Typography
-                        style={invalidEmail ? {color: 'red'} : {color: '#000'}}
+                        style={invalidEmail ? { color: 'red' } : { color: '#000' }}
                     >
                         Email
                     </Typography>
@@ -132,7 +150,7 @@ const RegisterForm = () => {
                 </Col>
                 <Col span={24} className={styles.field}>
                     <Typography
-                        style={invalidPassword ? {color: 'red'} : {color: '#000'}}
+                        style={invalidPassword ? { color: 'red' } : { color: '#000' }}
                     >
                         Mật khẩu
                     </Typography>
@@ -152,7 +170,7 @@ const RegisterForm = () => {
                 </Col>
                 <Col span={24} className={styles.field}>
                     <Typography
-                        style={invalidRePassword ? {color: 'red'} : {color: '#000'}}
+                        style={invalidRePassword ? { color: 'red' } : { color: '#000' }}
                     >
                         Mật khẩu
                     </Typography>
@@ -169,6 +187,16 @@ const RegisterForm = () => {
                         {formik.errors.rePassword}
                     </Typography>}
                 </Col>
+                {message && <Col span={24}>
+                    <Typography
+                        style={{
+                            textAlign: 'center',
+                            color: 'green'
+                        }}
+                    >
+                        {message}
+                    </Typography>
+                </Col>}
                 <Col span={24}>
                     <Button
                         type='primary'

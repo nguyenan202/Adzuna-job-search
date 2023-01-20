@@ -1,9 +1,7 @@
 import bcrypt from 'bcrypt'
-import { sequelize } from '../config/database';
-import { QueryTypes } from 'sequelize';
 import jwt from 'jsonwebtoken'
 import User from '../models/user';
-import Role from '../models/role';
+import Role from '../models/role'
 
 const loginFailed = (req, res) => {
     res.status(400).json({
@@ -47,10 +45,14 @@ const loginSuccess = async (req, res) => {
         }
 
         // Check first time login
+        User.belongsTo(Role);
         const userCheck = await User.findOne({
             where: {
                 externalId: userCreate.externalId
-            }
+            },
+            include: [{
+                model: Role
+            }]
         })
 
         // if first time login => add info to database
@@ -65,6 +67,10 @@ const loginSuccess = async (req, res) => {
         }
 
         const userResponse = await userCheck.toJSON();
+
+        delete userResponse.password;
+        delete userResponse.roleId;
+        delete userResponse.RoleId;
         
         res.status(200).json({
             user: userResponse,
@@ -84,25 +90,36 @@ const nativeLogin = async (req, res) => {
             password
         } = req.body
 
+        User.belongsTo(Role);
         const user = await User.findOne({
             where: {
                 email
-            }
+            },
+            include: [{
+                model: Role
+            }]
         })
 
+        
         if (!user) {
             return res.status(400).json({
                 message: 'User does not exist.'
             })
         }
 
+        if (user.externalType) {
+            return res.status(400).json({
+                message: `This email can login with ${user.externalType} only.`
+            })
+        }
+        
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
             return res.status(400).json({
                 message: 'Invalid password.'
             })
         }
-
+        
         const token = jwt.sign({
             id: user.id
         }, process.env.JWT_SECRET)
@@ -110,6 +127,8 @@ const nativeLogin = async (req, res) => {
         const userJson = user.toJSON();
 
         delete userJson.password;
+        delete userJson.roleId;
+        delete userJson.RoleId;
 
         res.status(200).json({
             user: userJson,
@@ -132,6 +151,14 @@ const nativeRegister = async (req, res) => {
             password
         } = req.body
 
+        const checkExistUser = await User.findOne({
+            where: {
+                email: email
+            }
+        })
+
+        if (checkExistUser) return res.status(409).json({ message: 'Email already exists.' })
+
         const salt = await bcrypt.genSalt();
         const passwordBcrypt = await bcrypt.hash(password, salt);
 
@@ -142,9 +169,11 @@ const nativeRegister = async (req, res) => {
             password: passwordBcrypt
         })
 
-        delete user.password
+        const userJson = user.toJSON();
 
-        res.status(200).json(user)
+        delete userJson.password;
+
+        res.status(200).json({ message: 'create success, please login.'})
     } catch (err) {
         res.status(500).json({ message: err })
     }

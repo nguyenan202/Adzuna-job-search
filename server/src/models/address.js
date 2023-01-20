@@ -4,7 +4,7 @@ import Company from './company';
 
 const Address = sequelize.define('Address', {
     id: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },

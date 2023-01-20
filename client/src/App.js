@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import './App.css';
 import Login from './pages/Login';
 import Home from './pages/HomePage';
-import { setLogin } from './redux/store'
+import { setLogin, setLogout } from './redux/store'
 
 import {
   Routes,
@@ -39,6 +39,7 @@ function App() {
 
     getUser();
   }, [dispatch])
+
 
   return (
     <div className="App" style={{ backgroundColor: themeToken.mainBackground }}>

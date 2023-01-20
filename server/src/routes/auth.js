@@ -8,6 +8,9 @@ import {
     nativeRegister
 } from '../controllers/auth';
 
+import User from '../models/user'
+import Role from '../models/role'
+
 const router = express.Router();
 dotenv.config();
 
@@ -48,6 +51,29 @@ router.post('/login', nativeLogin)
 // register
 router.post('/register', nativeRegister)
 
+router.get('/test', async (req,res)=>{
+    try {
+
+        User.belongsTo(Role);
+
+        const data = await User.findOne({
+            where: {
+                email: 'annthe161368@fpt.edu.vn'
+            },
+            include: [{
+                model: Role
+            }]
+        })
+
+        const dataJson = data.toJSON();
+        delete dataJson.RoleId
+
+        res.status(200).json({ data: dataJson })
+    }catch(err) {
+        res.status(500).json({ message: err })
+    }
+
+})
 
 router.get('/logout', (req, res) => {
     req.logOut(() => {

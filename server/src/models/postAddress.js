@@ -6,11 +6,19 @@ import Address from './address';
 const PostAddress = sequelize.define('PostAddress', {
     postId: {
         type: DataTypes.INTEGER,
-        primaryKey: true
+        primaryKey: true,
+        references: {
+            model: Post,
+            key: 'id'
+        }
     },
     addressId: {
         type: DataTypes.INTEGER,
-        primaryKey: true
+        primaryKey: true,
+        references: {
+            model: Address,
+            key: 'id'
+        }
     }
 })
 

@@ -3,24 +3,31 @@ import styles from './styles.module.scss'
 import { LogoutOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { setLogout } from "../../redux/store";
+import { useNavigate } from "react-router-dom";
 
 const Menu = ({ setIsOption }) => {
 
+    const navigate = useNavigate();
     const themeToken = theme.useToken().token;
     const dispatch = useDispatch();
 
     const handleInfo = () => {
-        console.log('go to info');
+        navigate('/profile')
         setIsOption(false);
     }
 
     const handleSetting = () => {
-        console.log('go to setting');
+        navigate('/setting')
         setIsOption(false);
     }
 
     const handleLogout = () => {
+        window.open(
+            `${process.env.REACT_APP_API_URL}/auth/logout`,
+            '_self'
+        )
         dispatch(setLogout());
+        navigate('/login');
     }
 
     return (

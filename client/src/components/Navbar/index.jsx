@@ -13,6 +13,49 @@ import MenuMobile from './MenuMobile'
 const Paragraph = Typography.Paragraph;
 const currentUrl = window.location.href;
 
+// id map with user role id
+const routeSetting = [
+    {
+        id: 1,
+        routes: [
+            {
+                path: 'manage-post-admin',
+                name: 'Quản lý post'
+            },
+            {
+                path: 'manage-user',
+                name: 'Quản lý người dùng'
+            }
+        ]
+    },
+    {
+        id: 2,
+        routes: [
+            {
+                path: 'manage-post-employer',
+                name: 'Quản lý post'
+            },
+            {
+                path: 'create-post',
+                name: 'Tạo post'
+            }
+        ]
+    },
+    {
+        id: 3,
+        routes: [
+            {
+                path: 'cv',
+                name: 'Hồ sơ CV'
+            },
+            {
+                path: 'review-company',
+                name: 'Đánh giá công ty'
+            }
+        ]
+    }
+]
+
 const Navbar = ({ user }) => {
 
     const [isMobileOptionOpen, setIsMobileOptionOpen] = useState(false);
@@ -21,7 +64,6 @@ const Navbar = ({ user }) => {
 
     const themeToken = theme.useToken().token;
     const breakpointMobile = useBreakPoint(700);
-
 
     useEffect(() => {
         const htmlElement = document.querySelector('html')
@@ -36,12 +78,15 @@ const Navbar = ({ user }) => {
     }, [])
 
 
+    const route = routeSetting.find(route => route.id === user.Role.id).routes
+    console.log(user.Role.name);
+
     return (
         <Row className={styles.container}>
             <Row>
                 <Col className={styles.logo}>
                     <Image
-                        width='5rem'
+                        width='4rem'
                         preview={false}
                         src='assets/images/logo.png'
                     />
@@ -59,21 +104,21 @@ const Navbar = ({ user }) => {
                 <Col className={styles.item}>
                     <Link
                         className={styles.paragraph}
-                        to='/cv'
-                        style={currentStay === '/cv' ? { color: themeToken.mainColor } : {}}
-                        onClick={() => setCurrentStay('/cv')}
+                        to={`/${route[0].path}`}
+                        style={currentStay === `/${route[0].path}` ? { color: themeToken.mainColor } : {}}
+                        onClick={() => setCurrentStay(`/${route[0].path}`)}
                     >
-                        Hồ sơ CV
+                        {route[0].name}
                     </Link>
                 </Col>
                 <Col className={styles.item}>
                     <Link
                         className={styles.paragraph}
-                        to='/review'
-                        style={currentStay === '/review' ? { color: themeToken.mainColor } : {}}
-                        onClick={() => setCurrentStay('/review')}
+                        to={`/${route[1].path}`}
+                        style={currentStay === `/${route[1].path}` ? { color: themeToken.mainColor } : {}}
+                        onClick={() => setCurrentStay(`/${route[1].path}`)}
                     >
-                        Đánh giá công ty
+                        {route[1].name}
                     </Link>
                 </Col>
             </Row>
@@ -108,7 +153,7 @@ const Navbar = ({ user }) => {
                         className={styles.avatar}
                         src={user.externalId ? user.picturePath : `${process.env.REACT_APP_API_URL}/images/${user.picturePath}`}
                         alt={user.firstName}
-                        size='large'
+                        size='default'
                     />
                     <Paragraph className={styles.fullName}>
                         {`${user.lastName} ${user.firstName}`}
@@ -141,13 +186,31 @@ const Navbar = ({ user }) => {
             >
                 <Row justify='center'>
                     <Avatar
-                        src={user.picturePath}
+                        src={user.externalId ? user.picturePath : `${process.env.REACT_APP_API_URL}/images/${user.picturePath}`}
                         alt={user.firstName}
                         style={{
                             width: '6rem',
                             height: '6rem'
                         }}
                     />
+                </Row>
+
+                <Row
+                    justify='center'
+                    style={{
+                        marginTop: '1rem'
+                    }}
+                >
+                    <Col
+                        style={{
+                            padding: '0.5rem 1rem',
+                            color: themeToken.mainColor,
+                            borderRadius: '5px',
+                            border: '1px solid ' + themeToken.mainColor
+                        }}
+                    >
+                        {user.Role.name}
+                    </Col>
                 </Row>
 
                 <Row
@@ -164,10 +227,12 @@ const Navbar = ({ user }) => {
 
                 {breakpointMobile &&
                     <MenuMobile
+                        user={user}
                         currentStay={currentStay}
                         setCurrentStay={setCurrentStay}
                         setIsMobileOptionOpen={setIsMobileOptionOpen}
                         themeToken={themeToken}
+                        routeSetting={routeSetting}
                     />}
 
                 <Row>

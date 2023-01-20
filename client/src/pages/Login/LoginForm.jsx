@@ -34,34 +34,24 @@ const LoginForm = () => {
         setIsShowPassword(!isShowPassword)
     }
 
-    const login = (datas, onSubmitProps) => {
-
-    }
-
     const formik = useFormik({
         initialValues: initValuesLogin,
         validationSchema: loginSchema,
         onSubmit: async (value, onSubmitProps) => {
-            try{
+            try {
                 const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, value)
-                
+
                 const data = await response.data;
-                
+
                 dispatch(setLogin({
                     user: data.user,
                     token: data.token
                 }))
 
                 navigate('/')
-            }catch(err) {
+            } catch (err) {
                 const msg = err.response.data.message;
-                if (msg === 'Invalid password.') {
-                    onSubmitProps.setFieldError('password', msg)
-                }
-                
-                if (msg === 'User does not exist.') {
-                    onSubmitProps.setFieldError('email', msg)
-                }
+                onSubmitProps.setFieldError('email', msg);
             }
         }
     })

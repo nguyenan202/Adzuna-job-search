@@ -3,8 +3,9 @@ import { Link } from "react-router-dom"
 
 
 
-const MenuMobile = ({ currentStay, setCurrentStay, setIsMobileOptionOpen, themeToken}) => {
+const MenuMobile = ({ user, currentStay, setCurrentStay, setIsMobileOptionOpen, themeToken, routeSetting }) => {
 
+    const route = routeSetting.find(route => route.id === user.Role.id).routes
 
     return (
         <Row
@@ -43,8 +44,8 @@ const MenuMobile = ({ currentStay, setCurrentStay, setIsMobileOptionOpen, themeT
             </Row>
             <Row justify='center'>
                 <Link
-                    to='/cv'
-                    style={currentStay === '/cv' ? {
+                    to={`/${route[0].path}`}
+                    style={currentStay === `/${route[0].path}` ? {
                         width: '100%',
                         textAlign: 'center',
                         color: themeToken.mainColor,
@@ -61,17 +62,17 @@ const MenuMobile = ({ currentStay, setCurrentStay, setIsMobileOptionOpen, themeT
                         fontWeight: 500
                     }}
                     onClick={() => {
-                        setCurrentStay('/cv')
+                        setCurrentStay(`/${route[0].path}`)
                         setIsMobileOptionOpen(false)
                     }}
                 >
-                    Hồ sơ CV
+                    {route[0].name}
                 </Link>
             </Row>
             <Row justify='center'>
                 <Link
-                    to='/review'
-                    style={currentStay === '/review' ? {
+                    to={`/${route[1].path}`}
+                    style={currentStay === `/${route[1].path}` ? {
                         width: '100%',
                         textAlign: 'center',
                         color: themeToken.mainColor,
@@ -88,11 +89,11 @@ const MenuMobile = ({ currentStay, setCurrentStay, setIsMobileOptionOpen, themeT
                         fontWeight: 500
                     }}
                     onClick={() => {
-                        setCurrentStay('/review')
+                        setCurrentStay(`/${route[1].path}`)
                         setIsMobileOptionOpen(false)
                     }}
                 >
-                    Đánh giá công ty
+                    {route[1].name}
                 </Link>
             </Row>
         </Row>
