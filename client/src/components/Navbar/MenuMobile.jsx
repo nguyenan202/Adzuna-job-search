@@ -3,10 +3,39 @@ import { Link } from "react-router-dom"
 
 
 
-const MenuMobile = ({ user, currentStay, setCurrentStay, setIsMobileOptionOpen, themeToken, routeSetting }) => {
+const MenuMobile = ({ user, currentStay, setCurrentStay, setIsMobileOptionOpen, themeToken, permissions }) => {
+    
+    const listPermission = permissions.map(permission => permission.id !== 7 && (
+        <Row justify='center' key={permission.id}>
+            <Link
+                to={`/${permission.path}`}
+                style={currentStay === `/${permission.path}` ? {
+                    width: '100%',
+                    textAlign: 'center',
+                    color: themeToken.mainColor,
+                    padding: '1rem 0',
+                    fontSize: '1rem',
+                    backgroundColor: '#ebe6e6',
+                    fontWeight: 500
+                } : {
+                    width: '100%',
+                    textAlign: 'center',
+                    color: '#000',
+                    padding: '1rem 0',
+                    fontSize: '1rem',
+                    fontWeight: 500
+                }}
+                onClick={() => {
+                    setCurrentStay(`/${permission.path}`)
+                    setIsMobileOptionOpen(false)
+                }}
+            >
+                {permission.name}
+            </Link>
+        </Row>
+    ))
 
-    const route = routeSetting.find(route => route.id === user.Role.id).routes
-
+    
     return (
         <Row
             style={{
@@ -42,60 +71,7 @@ const MenuMobile = ({ user, currentStay, setCurrentStay, setIsMobileOptionOpen, 
                     Việc Làm
                 </Link>
             </Row>
-            <Row justify='center'>
-                <Link
-                    to={`/${route[0].path}`}
-                    style={currentStay === `/${route[0].path}` ? {
-                        width: '100%',
-                        textAlign: 'center',
-                        color: themeToken.mainColor,
-                        padding: '1rem 0',
-                        fontSize: '1rem',
-                        backgroundColor: '#ebe6e6',
-                        fontWeight: 500
-                    } : {
-                        width: '100%',
-                        textAlign: 'center',
-                        color: '#000',
-                        padding: '1rem 0',
-                        fontSize: '1rem',
-                        fontWeight: 500
-                    }}
-                    onClick={() => {
-                        setCurrentStay(`/${route[0].path}`)
-                        setIsMobileOptionOpen(false)
-                    }}
-                >
-                    {route[0].name}
-                </Link>
-            </Row>
-            <Row justify='center'>
-                <Link
-                    to={`/${route[1].path}`}
-                    style={currentStay === `/${route[1].path}` ? {
-                        width: '100%',
-                        textAlign: 'center',
-                        color: themeToken.mainColor,
-                        padding: '1rem 0',
-                        fontSize: '1rem',
-                        backgroundColor: '#ebe6e6',
-                        fontWeight: 500
-                    } : {
-                        width: '100%',
-                        textAlign: 'center',
-                        color: '#000',
-                        padding: '1rem 0',
-                        fontSize: '1rem',
-                        fontWeight: 500
-                    }}
-                    onClick={() => {
-                        setCurrentStay(`/${route[1].path}`)
-                        setIsMobileOptionOpen(false)
-                    }}
-                >
-                    {route[1].name}
-                </Link>
-            </Row>
+            {listPermission}
         </Row>
     )
 }

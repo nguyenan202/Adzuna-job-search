@@ -32,7 +32,7 @@ const User = sequelize.define('User', {
         allowNull: true
     },
     dob: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING(500),
         allowNull: true
     },
     externalId: {

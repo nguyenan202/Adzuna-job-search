@@ -12,10 +12,12 @@ import { FaFacebook } from 'react-icons/fa'
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
 import { useState } from 'react'
+import SpinLoading from '../../components/SpinLoading'
 
 const Login = () => {
 
     const [isLogin, setIsLogin] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const googleAuth = () => {
         window.open(
@@ -37,7 +39,7 @@ const Login = () => {
         setIsLogin(!isLogin);
     }
     
-    return (
+    return (isLoading ? <SpinLoading/> :
         <Row className={styles.container}>
             <Col className={styles.box}>
                 <Row className={styles.logo}>
@@ -56,7 +58,7 @@ const Login = () => {
                     </Col>
                 </Row>
 
-                {isLogin ? <LoginForm /> : <RegisterForm />}
+                {isLogin ? <LoginForm setIsLoading={setIsLoading} /> : <RegisterForm />}
 
                 <Row className={styles.button}>
                     {isLogin && <>

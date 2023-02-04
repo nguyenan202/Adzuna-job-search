@@ -22,7 +22,7 @@ const initValuesLogin = {
     password: ''
 }
 
-const LoginForm = () => {
+const LoginForm = ({ setIsLoading }) => {
 
     const [isShowPassword, setIsShowPassword] = useState(false);
 
@@ -39,7 +39,10 @@ const LoginForm = () => {
         validationSchema: loginSchema,
         onSubmit: async (value, onSubmitProps) => {
             try {
-                const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, value)
+                await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, value);
+
+                setIsLoading(true);
+                const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, value);
 
                 const data = await response.data;
 
@@ -47,11 +50,13 @@ const LoginForm = () => {
                     user: data.user,
                     token: data.token
                 }))
-
+                setIsLoading(false);
                 navigate('/')
             } catch (err) {
                 const msg = err.response.data.message;
+                msg === 'Invalid password.' ? onSubmitProps.setFieldError('password', msg) :
                 onSubmitProps.setFieldError('email', msg);
+                setIsLoading(false);
             }
         }
     })

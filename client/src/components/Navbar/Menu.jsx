@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setLogout } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 
-const Menu = ({ setIsOption }) => {
+const Menu = ({ setCurrentStay, setIsOption, user }) => {
 
     const navigate = useNavigate();
     const themeToken = theme.useToken().token;
@@ -13,20 +13,27 @@ const Menu = ({ setIsOption }) => {
 
     const handleInfo = () => {
         navigate('/profile')
+        setCurrentStay('/profile')
         setIsOption(false);
     }
 
     const handleSetting = () => {
         navigate('/setting')
+        setCurrentStay('/setting')
         setIsOption(false);
     }
 
-    const handleLogout = () => {
-        window.open(
-            `${process.env.REACT_APP_API_URL}/auth/logout`,
-            '_self'
-        )
+    const handleLogout = async () => {
+
         dispatch(setLogout());
+        
+        if (user.externalId) {
+            window.open(
+                `${process.env.REACT_APP_API_URL}/auth/logout`,
+                '_self'
+            )
+        }
+
         navigate('/login');
     }
 
@@ -51,7 +58,8 @@ const Menu = ({ setIsOption }) => {
                 />
                 Thông tin
             </Row>
-            <Row
+            {/* Check user can access 'setting' */}
+            {user.UserPermissions.find(permission => permission.Permission.path === 'setting') && <Row
                 className={styles.sub_option}
                 onClick={handleSetting}
             >
@@ -60,10 +68,10 @@ const Menu = ({ setIsOption }) => {
                     marginRight: '1rem'
                 }} />
                 Cài đặt
-            </Row>
+            </Row>}
             <Row
                 className={styles.sub_option}
-                onClick={handleLogout}    
+                onClick={handleLogout}
             >
                 <LogoutOutlined style={{
                     color: themeToken.mainColor,

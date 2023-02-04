@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import session from 'express-session'
+import fileUpload from 'express-fileupload'
 
 const config = (app) => {
 
@@ -14,10 +15,11 @@ const config = (app) => {
     app.use(express.static(path.join('./src', 'public')));
     app.use(express.json());    
     app.use(express.urlencoded({ extended: true }));
+    app.use(fileUpload());
 
     app.use(cors({
         origin: "http://localhost:3000",
-        methods: "GET,POST,PUT,DELETE",
+        methods: "GET,POST,PUT,DELETE,PATCH",
         credentials: true,
     }))
     app.use(morgan('common'))
@@ -37,6 +39,7 @@ const config = (app) => {
     //limit json req
     app.use(bodyParser.json({ limit: "30mb", extended: true }));
     app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+
 }
 
 export default config

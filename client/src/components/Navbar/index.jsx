@@ -1,60 +1,20 @@
 import styles from './styles.module.scss'
 
-import { Avatar, Col, Drawer, Image, Row, Typography, theme } from "antd"
+import { Avatar, Button, Col, Drawer, Dropdown, Image, Row, Tag, Typography, theme } from "antd"
 import { CaretLeftOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react'
 import { CgDetailsMore } from 'react-icons/cg'
-import { Link } from 'react-router-dom'
+import { MdMoreHoriz } from 'react-icons/md'
+import { Link, useNavigate } from 'react-router-dom'
 import Menu from './Menu';
-import useBreakPoint from '../../hooks/useBreakPoint'
+import useMediaQuery from '../../hooks/useMediaQuery'
 import MenuTablet from './MenuTablet'
 import MenuMobile from './MenuMobile'
 
 const Paragraph = Typography.Paragraph;
 const currentUrl = window.location.href;
 
-// id map with user role id
-const routeSetting = [
-    {
-        id: 1,
-        routes: [
-            {
-                path: 'manage-post-admin',
-                name: 'Quản lý post'
-            },
-            {
-                path: 'manage-user',
-                name: 'Quản lý người dùng'
-            }
-        ]
-    },
-    {
-        id: 2,
-        routes: [
-            {
-                path: 'manage-post-employer',
-                name: 'Quản lý post'
-            },
-            {
-                path: 'create-post',
-                name: 'Tạo post'
-            }
-        ]
-    },
-    {
-        id: 3,
-        routes: [
-            {
-                path: 'cv',
-                name: 'Hồ sơ CV'
-            },
-            {
-                path: 'review-company',
-                name: 'Đánh giá công ty'
-            }
-        ]
-    }
-]
+const roleColor = ['none','blue','gold','green']
 
 const Navbar = ({ user }) => {
 
@@ -63,7 +23,10 @@ const Navbar = ({ user }) => {
     const [isOption, setIsOption] = useState(false);
 
     const themeToken = theme.useToken().token;
-    const breakpointMobile = useBreakPoint(700);
+    const navigate = useNavigate();
+
+    const breakpointMobile = useMediaQuery('(min-width: 692px)');
+    const breakpointTablet = useMediaQuery('(min-width: 992px)');
 
     useEffect(() => {
         const htmlElement = document.querySelector('html')
@@ -77,18 +40,66 @@ const Navbar = ({ user }) => {
         return () => htmlElement.removeEventListener('click', listenHtml)
     }, [])
 
+    useEffect(() => {
+        if (breakpointTablet) setIsMobileOptionOpen(false);
+    }, [breakpointTablet])
 
-    const route = routeSetting.find(route => route.id === user.Role.id).routes
-    console.log(user.Role.name);
+    const permissions = user.UserPermissions;
+    const data = user.UserPermissions.map(p => p.Permission);
+    const listPermission = data.map(permission => (
+        <Col className={styles.item} key={permission.id}>
+            <Link
+                className={styles.paragraph}
+                to={`/${permission.path}`}
+                style={currentStay === `/${permission.path}` ? { color: themeToken.mainColor } : {}}
+                onClick={() => setCurrentStay(`/${permission.path}`)}
+            >
+                {permission.name}
+            </Link>
+        </Col>
+    ))
+
+    const showPermission = listPermission.filter((permission, index) => index <= 1)
+    const items = data.filter((permission, index) => index > 1 && permission.id !== 7).map((permission, index) => ({
+        key: index + '',
+        label: (
+            <Link
+                className={styles.paragraph}
+                to={`/${permission.path}`}
+                style={currentStay === `/${permission.path}` ? { color: themeToken.mainColor } : {}}
+                onClick={() => setCurrentStay(`/${permission.path}`)}
+            >
+                {permission.name}
+            </Link>
+        )
+    }))
+
+    const hidePermission = data.length > 2 && (
+        <Dropdown
+            menu={{ items }}
+            overlayStyle={{
+                width: '15rem'
+            }}
+        >
+            <Button>
+                <MdMoreHoriz />
+            </Button>
+        </Dropdown>
+    )
 
     return (
         <Row className={styles.container}>
-            <Row>
+            <Row style={{ alignItems: 'center' }}>
                 <Col className={styles.logo}>
                     <Image
                         width='4rem'
                         preview={false}
                         src='assets/images/logo.png'
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                            setCurrentStay('/');
+                            navigate('/');
+                        }}
                     />
                 </Col>
                 <Col className={styles.item}>
@@ -101,26 +112,8 @@ const Navbar = ({ user }) => {
                         Việc Làm
                     </Link>
                 </Col>
-                <Col className={styles.item}>
-                    <Link
-                        className={styles.paragraph}
-                        to={`/${route[0].path}`}
-                        style={currentStay === `/${route[0].path}` ? { color: themeToken.mainColor } : {}}
-                        onClick={() => setCurrentStay(`/${route[0].path}`)}
-                    >
-                        {route[0].name}
-                    </Link>
-                </Col>
-                <Col className={styles.item}>
-                    <Link
-                        className={styles.paragraph}
-                        to={`/${route[1].path}`}
-                        style={currentStay === `/${route[1].path}` ? { color: themeToken.mainColor } : {}}
-                        onClick={() => setCurrentStay(`/${route[1].path}`)}
-                    >
-                        {route[1].name}
-                    </Link>
-                </Col>
+                {showPermission}
+                {breakpointMobile && hidePermission}
             </Row>
 
             <Row style={{ position: 'relative', alignItems: 'center' }}>
@@ -170,7 +163,12 @@ const Navbar = ({ user }) => {
                     </Paragraph>
                 </Col>
 
-                {isOption && <Menu setIsOption={setIsOption} />}
+                {isOption &&
+                    <Menu
+                        setCurrentStay={setCurrentStay}
+                        setIsOption={setIsOption}
+                        user={user}
+                    />}
             </Row>
 
 
@@ -198,45 +196,53 @@ const Navbar = ({ user }) => {
                 <Row
                     justify='center'
                     style={{
-                        marginTop: '1rem'
-                    }}
-                >
-                    <Col
-                        style={{
-                            padding: '0.5rem 1rem',
-                            color: themeToken.mainColor,
-                            borderRadius: '5px',
-                            border: '1px solid ' + themeToken.mainColor
-                        }}
-                    >
-                        {user.Role.name}
-                    </Col>
-                </Row>
-
-                <Row
-                    justify='center'
-                    style={{
                         fontSize: '1.2rem',
                         padding: '1rem 0',
                         fontWeight: 500,
                         borderBottom: '1px solid rgba(5, 5, 5, 0.06)'
                     }}
                 >
-                    {`${user.lastName} ${user.firstName}`}
+                    <Row
+                        style={{
+                            width: '100%',
+                            fontSize: 'inherit',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        {`${user.lastName} ${user.firstName}`}
+
+                    </Row>
+
+                    <Row
+                        justify='center'
+                        style={{
+                            marginTop: '1rem'
+                        }}
+                    >
+                        <Tag
+                            color={roleColor[user.Role.id]}
+                            style={{
+                                padding: '0.25rem 1rem'
+                            }}    
+                        >
+                            {user.Role.name}
+                        </Tag>
+                    </Row>
                 </Row>
 
-                {breakpointMobile &&
+                {!breakpointMobile &&
                     <MenuMobile
                         user={user}
                         currentStay={currentStay}
                         setCurrentStay={setCurrentStay}
                         setIsMobileOptionOpen={setIsMobileOptionOpen}
                         themeToken={themeToken}
-                        routeSetting={routeSetting}
+                        permissions={data}
                     />}
 
                 <Row>
                     <MenuTablet
+                        user={user}
                         currentStay={currentStay}
                         themeToken={themeToken}
                         setCurrentStay={setCurrentStay}

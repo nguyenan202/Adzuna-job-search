@@ -80,11 +80,7 @@ const SearchHeader = () => {
         label: city.name,
         value: city.id
     }))
-
-    console.log({
-        input,
-        salary
-    });
+    
 
     return (
         <Row className={styles.container}>

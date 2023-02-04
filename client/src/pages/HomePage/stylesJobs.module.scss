@@ -1,4 +1,15 @@
 .container {
     width: 100%;
     border-bottom: 1px solid #ccc;
+    padding: 2rem 4rem;
+
+    .job_group {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
 }

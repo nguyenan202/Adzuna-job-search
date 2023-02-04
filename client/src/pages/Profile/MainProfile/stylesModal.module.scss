@@ -1,0 +1,27 @@
+.container {
+    position: relative;
+    height: 2.5rem;
+    margin-top: 1.5rem;
+
+    .inputImage {
+        position: absolute;
+        height: 100%;
+        z-index: 1;
+        opacity: 0;
+        cursor: pointer;
+    }
+}
+
+.container_avatar {
+    justify-content: center;
+
+    .avatar {
+        width: 15rem;
+        height: 15rem;
+        margin: 3rem 0
+    }
+}
+
+.text {
+    margin: 1rem 0
+}

@@ -5,10 +5,7 @@ import styles from './style.module.scss';
 import { useState } from "react";
 import * as yup from 'yup';
 import { useFormik } from 'formik'
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setLogin } from "../../redux/store";
 
 const iconStyle = { marginRight: '0.5rem', fontSize: '1.2rem', cursor: 'pointer' }
 
@@ -56,7 +53,6 @@ const RegisterForm = () => {
     const [message, setMessage] = useState(null);
 
     const tokenTheme = theme.useToken().token;
-    const navigate = useNavigate();
 
     const togglePassword = () => {
         setIsShowPassword(!isShowPassword)

@@ -2,6 +2,9 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../models/user';
 import Role from '../models/role'
+import Permission from '../models/permission';
+import UserPermission from '../models/userPermission';
+import SettingPermission from '../models/settingPermission';
 
 const loginFailed = (req, res) => {
     res.status(400).json({
@@ -45,21 +48,59 @@ const loginSuccess = async (req, res) => {
         }
 
         // Check first time login
-        User.belongsTo(Role);
+        User.hasMany(UserPermission, { foreignKey: 'userId' });
+        User.belongsTo(Role, { foreignKey: 'roleId' });
+        UserPermission.belongsTo(User, { foreignKey: 'userId' });
+        Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
+        UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
+
         const userCheck = await User.findOne({
             where: {
                 externalId: userCreate.externalId
             },
             include: [{
+                model: UserPermission,
+                include: [{
+                    model: Permission
+                }]
+            },{
                 model: Role
             }]
-        })
+        });
+
 
         // if first time login => add info to database
         if (!userCheck) {
             const userCreated = await User.create(userCreate);
-            const userResponse = await userCreated.toJSON();
+            await UserPermission.bulkCreate([
+                {
+                    userId: userCreated.id,
+                    permissionId: 5
+                },
+                {
+                    userId: userCreated.id,
+                    permissionId: 6
+                }
+            ]);
+
+            const user = await User.findOne({
+                where: {
+                    externalId: userCreate.externalId
+                },
+                include: [{
+                    model: UserPermission,
+                    include: [{
+                        model: Permission
+                    }]
+                },{
+                    model: Role
+                }]
+            });
             
+            const userResponse = await user.toJSON();
+
+            console.log(userResponse);
+
             return res.status(200).json({
                 user: userResponse,
                 token
@@ -71,7 +112,7 @@ const loginSuccess = async (req, res) => {
         delete userResponse.password;
         delete userResponse.roleId;
         delete userResponse.RoleId;
-        
+
         res.status(200).json({
             user: userResponse,
             token
@@ -90,16 +131,31 @@ const nativeLogin = async (req, res) => {
             password
         } = req.body
 
-        User.belongsTo(Role);
+        // User.belongsTo(Role, { foreignKey: 'roleId' });
+        User.hasMany(UserPermission, { foreignKey: 'userId' });
+        User.belongsTo(Role, { foreignKey: 'roleId' });
+        Role.hasMany(SettingPermission, { foreignKey: 'roleId' });
+        UserPermission.belongsTo(User, { foreignKey: 'userId' });
+        Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
+        UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
+
+
         const user = await User.findOne({
             where: {
                 email
             },
             include: [{
-                model: Role
+                model: UserPermission,
+                include: [{
+                    model: Permission
+                }]
+            },{
+                model: Role,
+                include: [{
+                    model: SettingPermission
+                }]
             }]
-        })
-
+        });
         
         if (!user) {
             return res.status(400).json({
@@ -112,16 +168,16 @@ const nativeLogin = async (req, res) => {
                 message: `This email can login with ${user.externalType} only.`
             })
         }
-        
+
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) {
             return res.status(400).json({
                 message: 'Invalid password.'
             })
         }
-        
+
         const token = jwt.sign({
-            id: user.id
+            id: user.roleId
         }, process.env.JWT_SECRET)
 
         const userJson = user.toJSON();
@@ -136,7 +192,7 @@ const nativeLogin = async (req, res) => {
         })
 
     } catch (err) {
-        return res.status(500).json({ error: err.message });
+        return res.status(500).json({ message: err });
     }
 
 }
@@ -169,11 +225,22 @@ const nativeRegister = async (req, res) => {
             password: passwordBcrypt
         })
 
+        await UserPermission.bulkCreate([
+            {
+                userId: user.id,
+                permissionId: 5
+            },
+            {
+                userId: user.id,
+                permissionId: 6
+            }
+        ])
+
         const userJson = user.toJSON();
 
         delete userJson.password;
 
-        res.status(200).json({ message: 'create success, please login.'})
+        res.status(200).json({ message: 'create success, please login.' })
     } catch (err) {
         res.status(500).json({ message: err })
     }
