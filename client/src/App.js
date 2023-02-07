@@ -9,7 +9,6 @@ import {
   Route,
   Navigate
 } from 'react-router-dom'
-import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios';
 import Navbar from './components/Navbar';
@@ -17,8 +16,7 @@ import { theme } from 'antd';
 import Setting from './pages/SettingPage';
 import Profile from './pages/Profile';
 import SpinLoading from './components/SpinLoading';
-
-const socket = io.connect(process.env.REACT_APP_API_URL)
+import PostPage from './pages/PostPage';
 
 function App() {
 
@@ -49,12 +47,6 @@ function App() {
     getUser();
   }, [dispatch])
 
-  useEffect(() => {
-    user && socket.on(`approved-company-userId-${user.id}`, (company) => {
-      console.log(company);
-    })
-  },[socket])
-
   // console.log(token);
   return (
     <div className="App" style={{ backgroundColor: themeToken.mainBackground }}>
@@ -66,6 +58,7 @@ function App() {
           <Route path='/' element={user ? <Home /> : <Navigate to='/login' />} />
           <Route path='/setting' element={user ? <Setting /> : <Navigate to='/login' />} />
           <Route path='/profile' element={user ? <Profile user={user} /> : <Navigate to='/login' />} />
+          <Route path='/up-post' element={user ? <PostPage user={user}/> : <Navigate to='/login' />} />
         </Routes>
       </>}
     </div>

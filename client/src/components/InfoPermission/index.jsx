@@ -1,4 +1,4 @@
-import { Avatar, Button, Checkbox, Col, Image, Input, Modal, Row, Select, Typography, theme } from "antd"
+import { Avatar, Button, Checkbox, Col, Modal, Row, Select, Typography, theme } from "antd"
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { AiFillWarning } from 'react-icons/ai'

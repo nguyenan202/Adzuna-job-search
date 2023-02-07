@@ -28,9 +28,6 @@ router.patch('/', verifyTokenAdmin, async (req, res) => {
             permissions
         } = req.body;
 
-        console.log(userId);
-        console.log(permissions);
-
         //permissions = JSON.parse(permissions);
 
         await UserPermissions.destroy({

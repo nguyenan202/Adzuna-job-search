@@ -38,7 +38,6 @@ const Company = ({ user, layout }) => {
 
     const isWaitToSignCompany = historySign && historySign.find(sign => sign.status === 0);
 
-
     useEffect(() => {
 
         const fetchingCompany = async () => {
@@ -76,17 +75,24 @@ const Company = ({ user, layout }) => {
         }
 
         socket.on(`approved-company-userId-${user.id}`, () => {
-            console.log('emit');
             fetchingCompany();
             fetchingHistory();
         })
 
-
         fetchingCompany();
         fetchingHistory();
 
-    }, [user.id, token, keyRerender, socket])
+    }, [user.id, token, keyRerender]);
 
+    useEffect(() => {
+
+        company && socket.on(`updated-company-${company.id}`, (data) => {
+            console.log('emit updated company');
+            data.status && setCompany(data.company);
+        })
+
+    }, [company])
+    
     return (
         <Col
             className={styles.container}

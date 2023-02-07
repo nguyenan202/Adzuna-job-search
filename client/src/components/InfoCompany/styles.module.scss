@@ -1,0 +1,20 @@
+.sub_container {
+    padding: 1rem;
+    border-radius: 4px;
+    justify-content: space-between;
+
+    .full_width {
+        width: 100% !important;
+    }
+
+    .title_field {
+        margin-bottom: 0.25rem !important;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .btn_change {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}

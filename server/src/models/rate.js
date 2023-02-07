@@ -1,24 +1,27 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
+import Company from "./company";
 import User from "./user";
 
-const Company = sequelize.define('Conpany',{
+const Rate = sequelize.define('Rate', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
-        type: DataTypes.STRING
+    star: {
+        type: DataTypes.FLOAT,
+        allowNull: false
     },
-    picturePath: {
-        type: DataTypes.STRING
+    comment: {
+        type: DataTypes.TEXT
     },
-    description: {
-        type: DataTypes.STRING(2000)
-    },
-    size: {
-        type: DataTypes.INTEGER
+    companyId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Company,
+            key: 'id'
+        }
     },
     userId: {
         type: DataTypes.INTEGER,
@@ -29,6 +32,6 @@ const Company = sequelize.define('Conpany',{
     }
 })
 
-await sequelize.sync()
+await sequelize.sync();
 
-export default Company;
+export default Rate;
