@@ -8,6 +8,7 @@ import Role from "../models/role";
 import User from "../models/user";
 import UserPermission from "../models/userPermission";
 import SettingPermission from '../models/settingPermission';
+import UserSettingPermission from '../models/userSettingPermission';
 
 
 const getUserById = async (req, res) => {
@@ -17,9 +18,12 @@ const getUserById = async (req, res) => {
 
         User.hasMany(UserPermission, { foreignKey: 'userId' });
         User.belongsTo(Role, { foreignKey: 'roleId' });
+        Role.hasMany(UserSettingPermission, { foreignKey: 'roleId' });
+        UserSettingPermission.belongsTo(SettingPermission, { foreignKey: 'settingPermissionId' });
         UserPermission.belongsTo(User, { foreignKey: 'userId' });
         Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
         UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
+
 
         const user = await User.findOne({
             where: {
@@ -31,9 +35,15 @@ const getUserById = async (req, res) => {
                     model: Permission
                 }]
             }, {
-                model: Role
+                model: Role,
+                include: [{
+                    model: UserSettingPermission,
+                    include: {
+                        model: SettingPermission
+                    }
+                }]
             }]
-        })
+        });
 
         res.status(200).json(user)
     } catch (err) {
@@ -98,7 +108,8 @@ const updateInfomation = async (req, res) => {
         if (updatedRow[0] !== 0) {
             User.hasMany(UserPermission, { foreignKey: 'userId' });
             User.belongsTo(Role, { foreignKey: 'roleId' });
-            Role.hasMany(SettingPermission, { foreignKey: 'roleId' });
+            Role.hasMany(UserSettingPermission, { foreignKey: 'roleId' });
+            UserSettingPermission.belongsTo(SettingPermission, { foreignKey: 'settingPermissionId' });
             UserPermission.belongsTo(User, { foreignKey: 'userId' });
             Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
             UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
@@ -115,7 +126,10 @@ const updateInfomation = async (req, res) => {
                 }, {
                     model: Role,
                     include: [{
-                        model: SettingPermission
+                        model: UserSettingPermission,
+                        include: {
+                            model: SettingPermission
+                        }
                     }]
                 }]
             })
@@ -173,7 +187,8 @@ const updateImage = async (req, res) => {
         if (updateRow[0] !== 0) {
             User.hasMany(UserPermission, { foreignKey: 'userId' });
             User.belongsTo(Role, { foreignKey: 'roleId' });
-            Role.hasMany(SettingPermission, { foreignKey: 'roleId' });
+            Role.hasMany(UserSettingPermission, { foreignKey: 'roleId' });
+            UserSettingPermission.belongsTo(SettingPermission, { foreignKey: 'settingPermissionId' });
             UserPermission.belongsTo(User, { foreignKey: 'userId' });
             Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
             UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
@@ -190,7 +205,10 @@ const updateImage = async (req, res) => {
                 }, {
                     model: Role,
                     include: [{
-                        model: SettingPermission
+                        model: UserSettingPermission,
+                        include: {
+                            model: SettingPermission
+                        }
                     }]
                 }]
             })
@@ -232,7 +250,8 @@ const deleteImage = async (req, res) => {
         if (updatedRow[0] !== 0) {
             User.hasMany(UserPermission, { foreignKey: 'userId' });
             User.belongsTo(Role, { foreignKey: 'roleId' });
-            Role.hasMany(SettingPermission, { foreignKey: 'roleId' });
+            Role.hasMany(UserSettingPermission, { foreignKey: 'roleId' });
+            UserSettingPermission.belongsTo(SettingPermission, { foreignKey: 'settingPermissionId' });
             UserPermission.belongsTo(User, { foreignKey: 'userId' });
             Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
             UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
@@ -249,7 +268,10 @@ const deleteImage = async (req, res) => {
                 }, {
                     model: Role,
                     include: [{
-                        model: SettingPermission
+                        model: UserSettingPermission,
+                        include: {
+                            model: SettingPermission
+                        }
                     }]
                 }]
             })
@@ -280,12 +302,12 @@ const getPasswordByUserId = async (req, res) => {
                 id
             }
         })
-        
+
         res.status(200).json({
             password: user.password
         })
 
-    }catch(err) {
+    } catch (err) {
         res.status(500).json({ message: err })
     }
 }
@@ -334,7 +356,7 @@ const updatePassword = async (req, res) => {
             status: false,
             message: 'Có lỗi vui lòng thử lại sau.'
         })
-    }catch(err) {
+    } catch (err) {
         res.status(500).json({ message: err })
     }
 }

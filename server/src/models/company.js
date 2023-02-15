@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
 import User from "./user";
+import Priority from './priority';
 
 const Company = sequelize.define('Conpany',{
     id: {
@@ -26,6 +27,17 @@ const Company = sequelize.define('Conpany',{
             model: User,
             key: 'id'
         }
+    },
+    url: {
+        type: DataTypes.TEXT,
+    },
+    priorityId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Priority,
+            key: 'id'
+        },
+        defaultValue: 1
     }
 })
 

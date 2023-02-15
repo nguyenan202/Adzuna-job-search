@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 
 
 
-const MenuMobile = ({ user, currentStay, setCurrentStay, setIsMobileOptionOpen, themeToken, permissions }) => {
+const MenuMobile = ({ currentStay, setCurrentStay, setIsMobileOptionOpen, themeToken, permissions }) => {
     
     const listPermission = permissions.map(permission => permission.id !== 7 && (
         <Row justify='center' key={permission.id}>

@@ -1,43 +1,22 @@
 import express from 'express'
 
-import Role from '../models/role';
 import {
+    verifyToken,
     verifyTokenAdmin
-} from '../middlewares/auth'
-import User from '../models/user'
+} from '../middlewares/auth';
+
+import {
+    createRole,
+    getAllRole,
+    updateRole
+} from '../controllers/role';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, getAllRole);
 
-    try {
-        const roles = await Role.findAll();
+router.post('/', verifyToken, createRole);
 
-        res.status(200).json(roles);
-    }catch(err) {
-        res.status(500).json({ message: err })
-    }
-})
-
-router.patch('/', verifyTokenAdmin, async (req, res) => {
-
-    try{
-        const { userId, roleId } = req.body;
-
-        const updateData = {
-            roleId
-        }
-
-        const updatedRow = await User.update(updateData, {
-            where: {
-                id: userId
-            }
-        })
-
-        res.status(200).json({ update: updatedRow[0] })
-    }catch(err) {
-        res.status(500).json({ message: err });
-    }
-})
+router.patch('/', verifyTokenAdmin, updateRole);
 
 export default router;

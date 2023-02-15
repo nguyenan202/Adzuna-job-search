@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
-import Role from "./role";
 
 const SettingPermission = sequelize.define('SettingPermission', {
     id: {
@@ -10,13 +9,6 @@ const SettingPermission = sequelize.define('SettingPermission', {
     },
     name: {
         type: DataTypes.TEXT
-    },
-    roleId: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: Role,
-            key: 'id'
-        }
     }
 })
 

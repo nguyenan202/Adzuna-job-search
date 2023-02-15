@@ -19,7 +19,15 @@ const infoSchema = yup.object().shape({
     firstName: yup.string().required('Tên không được để trống'),
     dob: yup.string().notRequired().nullable(),
     email: yup.string().email('Email không hợp lệ').required('Email không được trống'),
-    address: yup.string().notRequired().nullable()
+    address: yup.string().notRequired().nullable(),
+    phone: yup.string().notRequired().nullable()
+    .test(
+        'Số điện thoại không hợp lệ',
+        'Số điện thoại không hợp lệ',
+        (value) => /^\d+$/.test(value)
+    )
+    .min(9, 'Độ dài số điện thoại từ 9-11')
+    .max(11, 'Độ dài số điện thoại từ 9-11')
 })
 
 const InputField = ({ field, value, isInvalidMessage, ...props }) => {
@@ -78,7 +86,8 @@ const Profile = ({ layout, user }) => {
         lastName: user.lastName,
         dob: user.dob,
         email: user.email,
-        address: user.address
+        address: user.address,
+        phone: user.phone
     });
 
 
@@ -107,6 +116,7 @@ const Profile = ({ layout, user }) => {
     const isInvalidMessageLastName = formik.touched.lastName && Boolean(formik.errors.lastName) && formik.errors.lastName;
     const isInvalidMessageFirstName = formik.touched.firstName && Boolean(formik.errors.firstName) && formik.errors.firstName;
     const isInvalidMessageEmail = formik.touched.email && Boolean(formik.errors.email) && formik.errors.email;
+    const isInvalidMessagePhone = formik.touched.phone && Boolean(formik.errors.phone) && formik.errors.phone;
 
     const handleOke = async () => {
         setConfirmLoading(true);
@@ -284,6 +294,7 @@ const Profile = ({ layout, user }) => {
                             onChangeCapture={() => setIsSaveButton(true)}
                             value={formik.values.lastName}
                             isInvalidMessage={isInvalidMessageLastName}
+                            disabled={user.externalId}
                         />
                         <InputField
                             field='Tên'
@@ -294,6 +305,7 @@ const Profile = ({ layout, user }) => {
                             onChangeCapture={() => setIsSaveButton(true)}
                             value={formik.values.firstName}
                             isInvalidMessage={isInvalidMessageFirstName}
+                            disabled={user.externalId}
                         />
                         <InputField
                             field='Email'
@@ -304,6 +316,16 @@ const Profile = ({ layout, user }) => {
                             value={formik.values.email}
                             isInvalidMessage={isInvalidMessageEmail}
                             disabled
+                        />
+                        <InputField
+                            field='Số điện thoại'
+                            span={breakPointMobile ? 24 : 11}
+                            placeholder='Nhập số điện thoại'
+                            name='phone'
+                            onChange={formik.handleChange}
+                            onChangeCapture={() => setIsSaveButton(true)}
+                            value={formik.values.phone}
+                            isInvalidMessage={isInvalidMessagePhone}
                         />
                         <InputField
                             field='Địa chỉ'

@@ -3,8 +3,10 @@ import express from 'express'
 import Permission from '../models/permission';
 import UserPermissions from '../models/userPermission';
 import {
-    verifyTokenAdmin
+    verifyToken
 } from '../middlewares/auth'
+
+import { io } from '../index';
 
 const router = express.Router();
 
@@ -19,7 +21,7 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.patch('/', verifyTokenAdmin, async (req, res) => {
+router.patch('/', verifyToken, async (req, res) => {
 
     try {
 
@@ -27,8 +29,6 @@ router.patch('/', verifyTokenAdmin, async (req, res) => {
             userId,
             permissions
         } = req.body;
-
-        //permissions = JSON.parse(permissions);
 
         await UserPermissions.destroy({
             where: {
@@ -48,6 +48,7 @@ router.patch('/', verifyTokenAdmin, async (req, res) => {
             await UserPermissions.create(data);
         }
 
+        io.emit(`updated-permission-${userId}`);
         res.status(200).json({
             message: 'Update Permissions success.'
         })

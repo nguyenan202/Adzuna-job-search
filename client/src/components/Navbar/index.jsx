@@ -14,10 +14,10 @@ import MenuMobile from './MenuMobile'
 const Paragraph = Typography.Paragraph;
 const currentUrl = window.location.href;
 
-const roleColor = ['none','blue','gold','green']
+const roleColor = ['none','blue','gold','green'];
 
 const Navbar = ({ user }) => {
-
+    
     const [isMobileOptionOpen, setIsMobileOptionOpen] = useState(false);
     const [currentStay, setCurrentStay] = useState(currentUrl.replace(process.env.REACT_APP_CURRENT_URL, ''));
     const [isOption, setIsOption] = useState(false);
@@ -44,8 +44,8 @@ const Navbar = ({ user }) => {
         if (breakpointTablet) setIsMobileOptionOpen(false);
     }, [breakpointTablet])
 
-    const permissions = user.UserPermissions;
-    const data = user.UserPermissions.map(p => p.Permission);
+    const data = user.UserPermissions.map(p => p.Permission).filter(p => p.path !== 'setting');
+    
     const listPermission = data.map(permission => (
         <Col className={styles.item} key={permission.id}>
             <Link
@@ -94,7 +94,7 @@ const Navbar = ({ user }) => {
                     <Image
                         width='4rem'
                         preview={false}
-                        src='assets/images/logo.png'
+                        src={`${process.env.REACT_APP_CURRENT_URL}/assets/images/logo.png`}
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
                             setCurrentStay('/');

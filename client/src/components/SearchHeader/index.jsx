@@ -4,6 +4,7 @@ import {
     Row,
     Select,
     Slider,
+    Spin,
     Typography,
     theme
 } from "antd"
@@ -13,7 +14,9 @@ import { IoLocationOutline, IoBuildOutline } from 'react-icons/io5'
 import { AiOutlineSearch } from 'react-icons/ai'
 import { MdAttachMoney } from 'react-icons/md'
 import { BsBag } from 'react-icons/bs'
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { useSelector } from "react-redux"
 
 const Title = Typography.Title
 
@@ -50,42 +53,81 @@ const MySlider = styled(Slider)`
     }
 `
 
-const citis = [
-    {
-        id: 1,
-        name: 'Hà Nội'
-    },
-    {
-        id: 2,
-        name: 'Đà Nẵng'
-    },
-    {
-        id: 3,
-        name: 'Hải Phòng'
-    },
-    {
-        id: 4,
-        name: 'TP Hồ Chí Minh'
-    }
-]
-
-const SearchHeader = () => {
+const SearchHeader = ({ numberOfPost, cities, search, setSearch, loadingHome }) => {
 
     const [input, setInput] = useState('');
     const [salary, setSalary] = useState([0, 100]);
 
-    const themeToken = theme.useToken().token;
+    const [isLoading, setIsLoading] = useState(false);
+    const [jobs, setJobs] = useState([]);
+    const [selectedJobId, setSelectedJobId] = useState(1);
+    const [specializations, setSpecializations] = useState([]);
+    const [selectedSpecialization, setSelectedSpecialization] = useState(1);
+    const [selectedCity, setSelectedCity] = useState(cities[0].name);
 
-    const options = citis.map((city) => ({
-        label: city.name,
-        value: city.id
-    }))
+    const themeToken = theme.useToken().token;
+    const token = useSelector(state => state.token);
     
+    useEffect(() => {
+        try {
+            const fetching = async () => {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/job`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+    
+                setJobs(response.data);
+            }
+
+            setIsLoading(true)
+            fetching().then(() => {
+                setIsLoading(false);
+            });
+        }catch(err) {
+            setJobs([]);
+        }
+
+    }, [])
+
+    useEffect(() => {
+        try {
+            const fetching = async () => {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/specialization/${selectedJobId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                setSpecializations(response.data);
+            }
+
+            setIsLoading(true)
+            fetching().then(() => {
+                setIsLoading(false);
+            });
+        }catch(err) {
+            setSpecializations([])
+        }
+    }, [selectedJobId])
+    
+
+    const handleSearchJobs = () => {
+        setSearch({
+            key: search.key+1,
+            data: {
+                value: input,
+                salary,
+                location: selectedCity,
+                specialization: selectedSpecialization
+            }
+        })
+    }
 
     return (
         <Row className={styles.container}>
             <Row className={styles.main}>
-                <Title>953 Việc Làm Dành Cho Bạn</Title>
+                <Title>{numberOfPost || 0} Việc Làm Dành Cho Bạn</Title>
 
                 <Row className={styles.form}>
                     <Row
@@ -132,9 +174,17 @@ const SearchHeader = () => {
                         />
                         <MySelect
                             className={styles.select}
-                            defaultValue={citis[0].id}
-                            options={options}
-                        />
+                            defaultValue={selectedCity}
+                            onSelect={city => setSelectedCity(city)}
+                        >
+                            {
+                                cities.map(city => (
+                                    <MySelect.Option key={city.id} value={city.name}>
+                                        {city.name}
+                                    </MySelect.Option>
+                                ))
+                            }
+                        </MySelect>
                     </Row>
                     <Row
                         className={styles.form_select}
@@ -150,9 +200,17 @@ const SearchHeader = () => {
                         />
                         <MySelect
                             className={styles.select}
-                            defaultValue={'Tất cả ngành nghề'}
-                            options={options}
-                        />
+                            defaultValue={selectedJobId}
+                            onSelect={id => setSelectedJobId(id)}
+                        >
+                            {
+                                jobs.map(job => (
+                                    <MySelect.Option key={job.id} value={job.id}>
+                                        {job.name}
+                                    </MySelect.Option>
+                                ))
+                            }
+                        </MySelect>
                     </Row>
                     <Row
                         className={styles.form_select}
@@ -168,9 +226,17 @@ const SearchHeader = () => {
                         />
                         <MySelect
                             className={styles.select}
-                            defaultValue={'Tất cả lĩnh vực'}
-                            options={options}
-                        />
+                            defaultValue={selectedSpecialization}
+                            onSelect={(id) => setSelectedSpecialization(id)}
+                        >
+                            {
+                                specializations.map(spec => (
+                                    <MySelect.Option key={spec.id} value={spec.id}>
+                                        {spec.name}
+                                    </MySelect.Option>
+                                ))
+                            }
+                        </MySelect>
                     </Row>
                     <Button
                         className={styles.btn}
@@ -178,11 +244,18 @@ const SearchHeader = () => {
                             backgroundColor: themeToken.mainColor,
                             color: themeToken.textColor
                         }}
+                        onClick={handleSearchJobs}
                     >
                         Tìm kiếm
                     </Button>
                 </Row>
             </Row>
+
+            {(isLoading || loadingHome) && <Row
+                className={styles.loading}
+            >
+                <Spin/>
+            </Row>}
         </Row>
     )
 }

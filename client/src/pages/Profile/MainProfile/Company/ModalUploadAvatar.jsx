@@ -9,7 +9,7 @@ import {
 import { useState } from "react";
 import styles from './stylesModal.module.scss'
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 
 const ModalUploadAvatar = ({ isOpenModalChangeAvatar, setIsOpenModalChangeAvatar, company }) => {

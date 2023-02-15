@@ -1,19 +1,8 @@
-import { Col, List, Row } from "antd"
+import { List, Row } from "antd"
 import styles from './stylesJobs.module.scss'
 import Job from './Job'
 
-const data = Array.from({
-    length: 21,
-}).map((_, i) => ({
-    id: i,
-    title: `Java Devs- Middle/Senior (Spring Boot, Jquery, SQL) ${i}th`,
-    avatar: 'https://rubicmarketing.com/wp-content/uploads/2022/07/y-nghia-logo-fpt-lan-2.jpg',
-    salary: '15000000',
-    company: 'Công ty TNHH Yakult',
-    location: ['Hà Nội', 'TP Hồ Chí Minh', 'Hải Phòng', 'Đà Nẵng']
-}));
-
-const Jobs = () => {
+const Jobs = ({ posts, isLoading }) => {
 
     return (
         <Row
@@ -23,10 +12,10 @@ const Jobs = () => {
                 className={styles.job_group}
                 itemLayout="vertical"
                 size="large"
-                pagination={{ pageSize: 4 }}
-                loading={false}
-                dataSource={data}
-                renderItem={(item,index) => ((index % 2 === 0) && <Job item={item} index={index} data={data}/>)}
+                pagination={{ pageSize: 6 }}
+                loading={isLoading}
+                dataSource={posts}
+                renderItem={(item,index) => ((index % 2 === 0) && <Job item={item} index={index} data={posts}/>)}
             />
         </Row>
     )

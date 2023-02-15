@@ -1,8 +1,8 @@
 
-import { Button, Col, Input, Modal, Row, Typography, theme } from 'antd';
+import { Button, Col, Input, Modal, QRCode, Row, Typography, theme } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { DeleteOutlined, EditOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 
@@ -11,6 +11,7 @@ import MyFieldInput from '../MyFieldInput';
 import useMediaQuery from '../../hooks/useMediaQuery';
 import styled from 'styled-components';
 import ModalHandleAddress from './ModalHandleAddress';
+import { useNavigate } from 'react-router-dom';
 
 const MyInput = styled(Input)`
     &&& {
@@ -20,19 +21,8 @@ const MyInput = styled(Input)`
     }
 `
 
-const addresss = [
-    {
-        id: 1,
-        name: 'HN'
-    },
-    {
-        id: 2,
-        name: 'HCM'
-    }
-]
-
 const InfoCompany = ({ company, breakPointMobile }) => {
-    
+
     const [initInfo, setInitInfo] = useState({
         name: company.name,
         size: company.size,
@@ -46,6 +36,7 @@ const InfoCompany = ({ company, breakPointMobile }) => {
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [message, setMessage] = useState(null);
 
+    const navigate = useNavigate();
     const themeToken = theme.useToken().token;
     const token = useSelector(state => state.token);
 
@@ -65,7 +56,7 @@ const InfoCompany = ({ company, breakPointMobile }) => {
 
         setMessage(response.data);
     }
-    
+
     
     return (
         <Row
@@ -80,6 +71,20 @@ const InfoCompany = ({ company, breakPointMobile }) => {
                     Thông tin công ty
                 </Typography.Title>
             </Row>
+
+            <MyFieldInput
+                field='Đặc quyền'
+                value={company.Priority.name}
+                disabled
+                span={breakPointMobile ? 24 : 11}
+            />
+
+            <MyFieldInput
+                field='Số lượng bài được post trong 1 tháng'
+                value={company.Priority.limitPost}
+                disabled
+                span={breakPointMobile ? 24 : 11}
+            />
 
             <MyFieldInput
                 field='ID'
@@ -151,6 +156,25 @@ const InfoCompany = ({ company, breakPointMobile }) => {
             </Col>
 
             <Col
+                span={breakPointMobile ? 24 : 11}
+                style={{
+                    margin: '1rem 0'
+                }}
+            >
+                <Button
+                    size='large'
+                    style={{
+                        width: '100%',
+                        backgroundColor: themeToken.mainColor,
+                        color: themeToken.textColor
+                    }}
+                    onClick={() => navigate(`/company/${company.id}`)}
+                >
+                    Trang cá nhân công ty
+                </Button>
+            </Col>
+
+            <Col
                 span={24}
             >
                 <Typography.Paragraph
@@ -159,9 +183,8 @@ const InfoCompany = ({ company, breakPointMobile }) => {
                     Mô tả công ty
                 </Typography.Paragraph>
                 <TextArea
-                    rows={4}
+                    rows={10}
                     placeholder='Nhập mô tả công ty'
-                    style={{ resize: 'none' }}
                     value={initInfo.description}
                     onChange={(e) => {
                         setInitInfo({
@@ -212,7 +235,7 @@ const InfoCompany = ({ company, breakPointMobile }) => {
                 onCancel={() => setShowAddress(false)}
                 footer={null}
                 width={breakPointTablet ? '90vh' : '80vh'}
-                style={{ top: '4rem' }}
+                style={{ top: '4rem', maxHeight: '90vh' }}
             >
                 {company &&
                     company.Addresses.map(address => (
@@ -271,6 +294,7 @@ const InfoCompany = ({ company, breakPointMobile }) => {
                 isShow={showAddAddress}
                 setIsShow={setShowAddAddress}
                 status={1}
+                company={company}
             />
 
             {/* Modal delete Address */}
@@ -279,6 +303,7 @@ const InfoCompany = ({ company, breakPointMobile }) => {
                 setIsShow={setShowDeleteAddress}
                 status={3}
                 value={selectedAddress}
+                company={company}
             />}
 
             {/* Modal update Address */}
@@ -287,7 +312,9 @@ const InfoCompany = ({ company, breakPointMobile }) => {
                 setIsShow={setShowUpdateAddress}
                 status={2}
                 value={selectedAddress}
+                company={company}
             />}
+
         </Row >
     )
 }

@@ -6,7 +6,8 @@ import {
 
 const initialState = {
     user: null,
-    token: null
+    token: null,
+    notification: null
 }
 
 const authSlice = createSlice({
@@ -23,6 +24,9 @@ const authSlice = createSlice({
         },
         setUser: (state, action) => {
             state.user = action.payload.user
+        },
+        setNotification: (state, action) => {
+            state.notification = action.payload.notification
         }
     }
 })
@@ -30,7 +34,8 @@ const authSlice = createSlice({
 export const {
     setLogin,
     setLogout,
-    setUser
+    setUser,
+    setNotification
 } = authSlice.actions
 
 const authSliceReducer = authSlice.reducer

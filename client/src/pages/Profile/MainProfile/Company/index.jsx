@@ -3,7 +3,7 @@ import styles from './styles.module.scss'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import io from 'socket.io-client';
+import { socket } from '../../../../App';
 
 import FormSignCompany from './FormSignCompany';
 import useMediaQuery from '../../../../hooks/useMediaQuery';
@@ -12,7 +12,6 @@ import SignCompanyHistory from '../../../../components/SignCompanyHistory';
 import WaitSignCompany from './WaitSignCompany';
 import CompanyForm from './CompanyForm';
 
-const socket = io.connect(process.env.REACT_APP_API_URL)
 
 const empty = <Row
     className={styles.full_width}
@@ -82,15 +81,17 @@ const Company = ({ user, layout }) => {
         fetchingCompany();
         fetchingHistory();
 
+        return () => socket.off(`approved-company-userId-${user.id}`)
+
     }, [user.id, token, keyRerender]);
 
     useEffect(() => {
 
         company && socket.on(`updated-company-${company.id}`, (data) => {
-            console.log('emit updated company');
             data.status && setCompany(data.company);
         })
 
+        if (company) return () => socket.off(`updated-company-${company.id}`)
     }, [company])
     
     return (

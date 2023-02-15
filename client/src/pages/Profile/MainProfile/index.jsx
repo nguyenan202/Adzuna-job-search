@@ -38,7 +38,7 @@ const MainProfile = ({ currentOptionIndex, setCurrentOptionIndex, layout, user, 
         setIsOpenDrawer(false);
     }
 
-    const listOption = options.filter(option => option.roleAccess.includes(user.Role.id)).map((option, index) => (
+    const listOption = options.map((option, index) => (
         <Row
             key={option.id}
             className={`${styles.btn_option}`}

@@ -4,6 +4,7 @@ import User from '../models/user';
 import Role from '../models/role'
 import Permission from '../models/permission';
 import UserPermission from '../models/userPermission';
+import UserSettingPermission from '../models/userSettingPermission';
 import SettingPermission from '../models/settingPermission';
 
 const loginFailed = (req, res) => {
@@ -63,7 +64,7 @@ const loginSuccess = async (req, res) => {
                 include: [{
                     model: Permission
                 }]
-            },{
+            }, {
                 model: Role
             }]
         });
@@ -92,14 +93,12 @@ const loginSuccess = async (req, res) => {
                     include: [{
                         model: Permission
                     }]
-                },{
+                }, {
                     model: Role
                 }]
             });
-            
-            const userResponse = await user.toJSON();
 
-            console.log(userResponse);
+            const userResponse = await user.toJSON();
 
             return res.status(200).json({
                 user: userResponse,
@@ -134,7 +133,8 @@ const nativeLogin = async (req, res) => {
         // User.belongsTo(Role, { foreignKey: 'roleId' });
         User.hasMany(UserPermission, { foreignKey: 'userId' });
         User.belongsTo(Role, { foreignKey: 'roleId' });
-        Role.hasMany(SettingPermission, { foreignKey: 'roleId' });
+        Role.hasMany(UserSettingPermission, { foreignKey: 'roleId' });
+        UserSettingPermission.belongsTo(SettingPermission, { foreignKey: 'settingPermissionId' });
         UserPermission.belongsTo(User, { foreignKey: 'userId' });
         Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
         UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
@@ -149,14 +149,17 @@ const nativeLogin = async (req, res) => {
                 include: [{
                     model: Permission
                 }]
-            },{
+            }, {
                 model: Role,
                 include: [{
-                    model: SettingPermission
+                    model: UserSettingPermission,
+                    include: {
+                        model: SettingPermission
+                    }
                 }]
             }]
         });
-        
+
         if (!user) {
             return res.status(400).json({
                 message: 'User does not exist.'

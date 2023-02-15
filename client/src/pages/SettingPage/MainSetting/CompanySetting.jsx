@@ -2,14 +2,14 @@ import { Button, Col, Modal, Row, Spin, Table, Typography, notification, theme }
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux";
-import io from 'socket.io-client';
+import { socket } from "../../../App";
 
+import styles from './styles.module.scss';
 import ModalInfoUser from "../../../components/ModalInfoUser";
 import MyFieldInput from "../../../components/MyFieldInput";
 import TextArea from "antd/es/input/TextArea";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 
-const socket = io.connect(process.env.REACT_APP_API_URL);
 
 const loading = (
     <Row
@@ -169,7 +169,7 @@ const CompanySetting = () => {
 
         try {
 
-            const response = axios.patch(`${process.env.REACT_APP_API_URL}/company`, data, {
+            const response = await axios.patch(`${process.env.REACT_APP_API_URL}/company`, data, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -229,8 +229,10 @@ const CompanySetting = () => {
 
     return (isLoading ? loading :
         <Row
+            className={styles.sub_container}
             style={{
-                width: '100%'
+                width: '100%',
+                backgroundColor: themeToken.componentBackground
             }}
         >
             <Table

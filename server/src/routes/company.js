@@ -13,23 +13,35 @@ import {
     updateInfo,
     updateImage,
     removeImage,
-    addAddress
+    addAddress,
+    updateAddress,
+    deleteAddress,
+    getAllAddressByCompanyId,
+    getCompanyByCompanyId,
+    getAllTopCompany,
+    getCompaniesByName
 } from '../controllers/company'
 
 const router = express.Router();
 
 
+router.get('/all', verifyToken, getAllTopCompany);
+router.get('/name/:name', verifyToken, getCompaniesByName);
 router.get('/:userId', verifyToken, getCompanyByUserId);
+router.get('/id/:id', verifyToken, getCompanyByCompanyId);
 router.get('/history/:userId', verifyToken, getHistorySignByUserId);
-router.get('/request/all',verifyTokenAdmin, getAllRequestCompany);
+router.get('/request/all',verifyToken, getAllRequestCompany);
+router.get('/address/:companyId', verifyToken, getAllAddressByCompanyId);
 
 router.post('/', verifyToken, signCompany);
 router.post('/address', verifyToken, addAddress);
 
-router.patch('/', verifyTokenAdmin, updateStatus);
+router.patch('/', verifyToken, updateStatus);
 router.patch('/infomation', verifyToken, updateInfo);
 router.patch('/image', verifyToken, updateImage);
+router.patch('/address', verifyToken, updateAddress)
 
 router.delete('/image', verifyToken, removeImage);
+router.delete('/address', verifyToken, deleteAddress);
 
 export default router;

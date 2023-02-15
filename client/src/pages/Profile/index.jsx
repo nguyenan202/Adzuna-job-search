@@ -9,17 +9,14 @@ import useMediaQuery from '../../hooks/useMediaQuery'
 const options = [
     {
         id: 0,
-        roleAccess: [1, 2, 3],
         name: 'Thông tin'
     },
     {
         id: 1,
-        roleAccess: [1, 2, 3],
         name: 'Bảo mật'
     },
     {
         id: 2,
-        roleAccess: [2, 3],
         name: 'Công ty'
     }
 ]

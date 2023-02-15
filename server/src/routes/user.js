@@ -13,8 +13,8 @@ import { verifyToken, verifyTokenAdmin } from '../middlewares/auth';
 
 const router = express.Router();
 
-router.get('/:id', verifyTokenAdmin, getUserById);
-router.get('/name/:name', verifyTokenAdmin, getUserByName);
+router.get('/:id', verifyToken, getUserById);
+router.get('/name/:name', verifyToken, getUserByName);
 router.get('/password/:id', verifyToken, getPasswordByUserId);
 
 router.patch('/password',verifyToken, updatePassword);

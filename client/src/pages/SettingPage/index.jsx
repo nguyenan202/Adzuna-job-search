@@ -7,17 +7,38 @@ import MainSetting from "./MainSetting"
 import useMediaQuery from '../../hooks/useMediaQuery'
 import PermissionsSetting from "./MainSetting/PermissionsSetting"
 import CompanySetting from "./MainSetting/CompanySetting"
+import RoleSetting from "./MainSetting/RoleSetting"
+import PostSetting from "./MainSetting/PostSetting"
 
 const Setting = () => {
 
     const [currentSettingIndex, setCurrentSettingIndex] = useState(0);
     const user = useSelector(state => state.user)
 
-    const renders = [<PermissionsSetting />, <CompanySetting />]
+    const renders = [
+        {
+            id: 1,
+            render: <PermissionsSetting />
+        },
+        {
+            id: 2,
+            render: <CompanySetting />
+        },
+        {
+            id: 3,
+            render: <RoleSetting/>
+        },
+        {
+            id: 4,
+            render: <PostSetting/>
+        }
+    ]
+    
+    const idsCanAccess = user.Role.UserSettingPermissions.map(sp => sp.SettingPermission.id);
+    
+    const canAccess = user.UserPermissions.find(p => p.Permission.path === 'setting') && idsCanAccess.length > 0
 
-    const canAccess = user.UserPermissions.find(p => p.Permission.path === 'setting') && user.Role.id === 1
-
-    const breakPointTablet = useMediaQuery('(min-width: 992px)')
+    const breakPointTablet = useMediaQuery('(min-width: 992px)');
     
     return (
         (canAccess ?
@@ -36,7 +57,7 @@ const Setting = () => {
                     user={user}
                     currentSettingIndex={currentSettingIndex}
                     setCurrentSettingIndex={setCurrentSettingIndex}
-                    renders={renders}
+                    renders={renders.filter(component => idsCanAccess.includes(component.id))}
                     layout={breakPointTablet ? 16 : 24}
                 />
             </Row> :

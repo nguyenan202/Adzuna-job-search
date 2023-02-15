@@ -13,14 +13,14 @@ const MainSetting = ({ user, currentSettingIndex, setCurrentSettingIndex, render
     const breakPointTablet = useMediaQuery('(max-width: 992px)');
     const breakPointMobile = useMediaQuery('(max-width: 576px)');
 
-    const settings = user.Role.SettingPermissions;
+    const settings = user.Role.UserSettingPermissions.map(usp => usp.SettingPermission).sort((usp1, usp2) => usp1.id - usp2.id);
 
     const handleClickSetting = (index) => {
         setCurrentSettingIndex(index);
         setIsOpenDrawer(false);
     }
 
-    const listOption = settings.map((setting,index) => (
+    const listOption = settings.map((setting, index) => (
         <Row
             key={setting.id}
             className={`${styles.btn_option}`}
@@ -43,14 +43,8 @@ const MainSetting = ({ user, currentSettingIndex, setCurrentSettingIndex, render
                 position: 'relative'
             }}
         >
-            <Row
-                className={styles.sub_container}
-                style={{
-                    backgroundColor: themeToken.componentBackground
-                }}
-            >
-                {renders[currentSettingIndex]}
-            </Row>
+
+            {renders[currentSettingIndex] ? renders[currentSettingIndex].render : <Row>Not Found Page</Row>}
 
             {breakPointTablet &&
                 <>

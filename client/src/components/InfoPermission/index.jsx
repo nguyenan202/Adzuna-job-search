@@ -35,7 +35,11 @@ const InfoPermission = ({ user, isLoading, setIsLoading }) => {
             const response_1 = await axios(`${process.env.REACT_APP_API_URL}/permission`);
 
             
-            const response_2 = await axios(`${process.env.REACT_APP_API_URL}/role`);
+            const response_2 = await axios(`${process.env.REACT_APP_API_URL}/role`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             
             
             setPermissions(response_1.data);
@@ -45,7 +49,7 @@ const InfoPermission = ({ user, isLoading, setIsLoading }) => {
         }
 
         fetchData();
-    }, [])
+    }, [token])
 
 
     const handleChangeCheckbox = (e, permission) => {

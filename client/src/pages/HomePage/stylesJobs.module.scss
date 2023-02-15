@@ -1,15 +1,29 @@
 .container {
-    width: 100%;
-    border-bottom: 1px solid #ccc;
-    padding: 2rem 4rem;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+  padding: 2rem 4rem;
+  min-height: calc(100vh - 366px);
 
-    .job_group {
-        width: 100%;
-    }
+  .job_group {
+    width: 100%;
+  }
+}
+
+.item {
+  width: 100%;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  box-shadow: 0 0 6px 0 #c4c7cc;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: rgb(196 199 204) 0px 0px 6px 4px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
-    .container {
-        padding: 0.5rem;
-    }
+  .container {
+    padding: 0.5rem;
+  }
 }

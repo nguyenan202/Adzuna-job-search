@@ -1,10 +1,11 @@
-import { Avatar, Col, Row, Select, Spin, Typography } from "antd"
+import { Avatar, Col, Row, Select, Spin, Typography, theme } from "antd"
 import axios from "axios";
 import { debounce } from 'lodash'
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import InfoPermission from "../../../components/InfoPermission";
 import useMediaQuery from "../../../hooks/useMediaQuery";
+import styles from './styles.module.scss';
 
 const DebounceSelect = ({ user, fetchFunction, debounceTime = 300, setUserChoose, setIsLoading, token, ...props }) => {
 
@@ -120,10 +121,18 @@ const PermissionsSetting = () => {
     const user = useSelector(state => state.user);
     const token = useSelector(state => state.token);
 
-    const breakPointTablet = useMediaQuery('(min-width: 572px)')
+    const themeToken = theme.useToken().token;
+
+    const breakPointTablet = useMediaQuery('(min-width: 572px)');
 
     return (
-        <Row>
+        <Row
+            className={styles.sub_container}
+            style={{
+                width: '100%',
+                backgroundColor: themeToken.componentBackground
+            }}
+        >
             <Row
                 style={{
                     width: '100%',

@@ -1,6 +1,6 @@
 import { Input, Modal, Typography, notification } from "antd";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 /**
@@ -15,39 +15,105 @@ const ModalHandleAddress = ({ isShow, setIsShow, status, value, company }) => {
     const [api, contextHolder] = notification.useNotification();
 
     const token = useSelector(state => state.token);
-    
+
+    // Refresh Component
+    useEffect(() => {
+        value && setNewAddress(value.name);
+    }, [value])
+
     const openNotificationWithIcon = (type, message) => {
         api[type]({
-            message: message
+            message: message,
+            duration: 2
         });
     };
-    
+
 
     const handleAddAddress = async () => {
         const data = {
-            companyId: value.companyId,
+            companyId: company.id,
             name: newAddress
         }
 
         try {
-            const respone = axios.post(`${process.env.REACT_APP_API_URL}/company/address`,data, {
+            setIsLoading(true);
+            const respone = await axios.post(`${process.env.REACT_APP_API_URL}/company/address`, data, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             })
 
-            console.log(respone.data);
-        }catch(err) {
+            if (respone.data.status) {
+                openNotificationWithIcon('success', 'Thêm địa chỉ thành công.')
+            }
 
+            setIsLoading(false);
+        } catch (err) {
+            openNotificationWithIcon('error', 'Có lỗi, vui lòng thử lại sau.')
+            setIsLoading(false);
         }
+
+        setIsShow(false);
+        setNewAddress('');
     }
 
-    const handleUpdateAddress = () => {
-        console.log('update');
+    const handleUpdateAddress = async () => {
+
+        const data = {
+            companyId: company.id,
+            name: newAddress,
+            id: value.id
+        }
+
+        try {
+            setIsLoading(true);
+            const respone = await axios.patch(`${process.env.REACT_APP_API_URL}/company/address`, data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+
+            if (respone.data.status) {
+                openNotificationWithIcon('success', 'Cập nhật địa chỉ thành công.')
+            }
+
+            setIsLoading(false);
+        } catch (err) {
+            openNotificationWithIcon('error', 'Có lỗi, vui lòng thử lại sau.')
+            setIsLoading(false);
+        }
+
+        setIsShow(false);
+        setNewAddress('');
     }
 
-    const handleRemoveAddress = () => {
-        console.log('remove');
+    const handleRemoveAddress = async () => {
+        const data = {
+            companyId: company.id,
+            id: value.id
+        }
+
+        try {
+            setIsLoading(true);
+            const respone = await axios.delete(`${process.env.REACT_APP_API_URL}/company/address`,{
+                data: data,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+
+            if (respone.data.status) {
+                openNotificationWithIcon('success', 'Xóa địa chỉ thành công.')
+            }
+
+            setIsLoading(false);
+        } catch (err) {
+            openNotificationWithIcon('error', 'Có lỗi, vui lòng thử lại sau.')
+            setIsLoading(false);
+        }
+
+        setIsShow(false);
+        setNewAddress('');
     }
 
     return (
@@ -58,11 +124,13 @@ const ModalHandleAddress = ({ isShow, setIsShow, status, value, company }) => {
                 open={isShow}
                 onCancel={() => setIsShow(false)}
                 onOk={status === 1 ? handleAddAddress : status === 2 ? handleUpdateAddress : handleRemoveAddress}
+                confirmLoading={isLoading}
             >
                 <Input
                     placeholder='Nhập địa chỉ mới'
                     value={newAddress}
                     onChange={e => setNewAddress(e.target.value)}
+                    disabled={status === 3}
                 />
             </Modal>
         </>

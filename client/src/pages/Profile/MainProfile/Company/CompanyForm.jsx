@@ -72,7 +72,7 @@ const CompanyForm = ({ company }) => {
                         defaultValue={avgRates}
                     />
                     <Typography.Paragraph style={{ margin: '0 0 0 0.5rem' }}>
-                        {`(${avgRates})`}
+                        {`(${avgRates || 0})`}
                     </Typography.Paragraph>
                 </Row>
 
@@ -80,7 +80,7 @@ const CompanyForm = ({ company }) => {
                     className={styles.full_width}
                     style={{ marginTop: '1rem' }}
                 >
-                    <a>
+                    <a href="#">
                         Hiên có {company.Rates.length} lượt đánh giá
                     </a>
                 </Row>

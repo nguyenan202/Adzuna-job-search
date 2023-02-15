@@ -5,10 +5,10 @@ import { AiFillSetting } from 'react-icons/ai'
 
 const NavSetting = ({ user, currentSettingIndex, setCurrentSettingIndex, layout }) => {
 
-    const settings = user.Role.SettingPermissions;
+    const settings = user.Role.UserSettingPermissions.map(usp => usp.SettingPermission).sort((usp1, usp2) => usp1.id - usp2.id);
+    
     const themeToken = theme.useToken().token;
     
-
     const listSetting = settings.map((setting, index) => (
         <Row
             key={setting.id}

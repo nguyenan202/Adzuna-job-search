@@ -7,7 +7,7 @@ const NavProfile = ({ currentOptionIndex, setCurrentOptionIndex, layout, options
     const themeToken = theme.useToken().token;
     const user = useSelector(state => state.user);
 
-    const listOption = options.filter(option => option.roleAccess.includes(user.Role.id)).map((option, index) => (
+    const listOption = options.map((option, index) => (
         <Row
             key={option.id}
             className={styles.setting}

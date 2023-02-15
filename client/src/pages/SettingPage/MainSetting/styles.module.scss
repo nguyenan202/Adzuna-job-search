@@ -1,5 +1,7 @@
 .container {
-    padding: 2rem 4rem 2rem 2rem;
+    padding: 2rem 4rem 8rem 2rem;
+    max-height: calc(100vh - 66px);
+    overflow-y: scroll;
 
     .sub_container {
         display: block;
@@ -26,6 +28,16 @@
         }
     }
 
+}
+
+.title_field {
+    margin-bottom: 0.25rem !important;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.full_width {
+    width: 100% !important;
 }
 
 .btn_option {

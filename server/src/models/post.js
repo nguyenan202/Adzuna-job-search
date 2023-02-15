@@ -2,6 +2,9 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
 import Specialization from './specialization';
 import Company from './company';
+import WorkingTime from './workingTime';
+import Level from './level';
+import ExperiencePost from './experiencePost';
 
 const Post = sequelize.define('Post', {
     id: {
@@ -26,16 +29,24 @@ const Post = sequelize.define('Post', {
         type: DataTypes.DATEONLY
     },
     salary: {
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER
     },
     quantity: {
         type: DataTypes.INTEGER
     },
-    workingTime: {
-        type: DataTypes.STRING
+    workingTimeId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: WorkingTime,
+            key: 'id'
+        }
     },
-    level: {
-        type: DataTypes.STRING
+    levelId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Level,
+            key: 'id'
+        }
     },
     gender: {
         /**
@@ -45,8 +56,12 @@ const Post = sequelize.define('Post', {
          */
         type: DataTypes.TINYINT
     },
-    experience: {
-        type: DataTypes.STRING
+    experiencePostId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: ExperiencePost,
+            key: 'id'
+        }
     },
     description: {
         type: DataTypes.TEXT
@@ -63,6 +78,19 @@ const Post = sequelize.define('Post', {
             model: Company,
             key: 'id'
         }
+    },
+    status: {
+        /**
+         *  0: pending
+         *  1: resolve
+         *  2: reject
+         */
+        type: DataTypes.TINYINT,
+        defaultValue: 0
+    },
+    reason: {
+        type: DataTypes.TEXT,
+        defaultValue: null
     }
 })
 

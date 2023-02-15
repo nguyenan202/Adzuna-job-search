@@ -1,54 +1,74 @@
-import { Row, Col, Image, theme } from "antd"
+import { Row, Col, Image, theme, Typography } from "antd"
 import { AiOutlineDollarCircle } from 'react-icons/ai'
 
+import { cities } from "./index";
+import styles from './stylesJobs.module.scss';
+import { useNavigate } from "react-router-dom";
 
-const Job = ({ item, index, data }) => {
 
-    const nextItem = data.find(itemm => itemm.id === item.id + 1);
-    const themeToken = theme.useToken().token;
+const Location = ({ name }) => (
+    <Col
+        style={{
+            padding: '0.2rem 0.5rem',
+            border: '1px solid #ccc',
+            margin: '0.25rem',
+            height: '30px'
+        }}
+    >
+        {name}
+    </Col>
+)
 
-    const Location = ({ name }) => (
-        <Col
-            style={{
-                padding: '0.2rem 0.5rem',
-                border: '1px solid #ccc',
-                margin: '0.25rem'
-            }}
-        >
-            {name}
-        </Col>
-    )
+const JobItem = ({ item, backgroundColor, cities }) => {
 
-    const JobItem = ({ item }) => (
+    const navigate = useNavigate();
+
+    const listAddress = item.PostAddresses.map(address => address.Address.name);
+
+    const citiesShow = cities.filter(city => listAddress.join(' ').includes(city.name));
+
+    const timeLeft = Math.floor((new Date(item.endAt) - new Date())/ (1000 * 60 * 60 * 24))+1;
+
+    return (
         <Col
             lg={{ span: 12 }}
-
             style={{
                 width: '100%',
                 display: 'flex',
                 justifyContent: 'center',
                 padding: '0.5rem 1rem'
             }}
+            onClick={() => navigate(`post/${item.id}`)}
         >
             <Row
+                className={styles.item}
                 style={{
-                    width: '100%',
-                    border: '1px solid #ccc',
-                    padding: '1rem',
-                    backgroundColor: themeToken.componentBackground,
-                    boxShadow: '0 0 6px 0 #c4c7cc',
-                    cursor: 'pointer'
+                    backgroundColor: backgroundColor
                 }}
             >
-                <Image
-                    src={item.avatar}
-                    width='5rem'
-                    height='5rem'
-                    preview={false}
-                    style={{
-                        border: '1px solid #ccc'
-                    }}
-                />
+                <Row style={{ maxWidth: '5rem' }}>
+                    <Col
+                        span={24}
+                    >
+                        <Image
+                            src={`${process.env.REACT_APP_API_URL}/images/${item.Conpany.picturePath}`}
+                            width='5rem'
+                            height='5rem'
+                            preview={false}
+                            style={{
+                                border: '1px solid #ccc',
+                                objectFit: 'contain'
+                            }}
+                        />
+                    </Col>
+                    <Col
+                        span={24}
+                    >
+                        <Typography.Paragraph style={{ margin: 0, fontWeight: 500, opacity: 0.7, fontSize: '0.75rem' }}>
+                            Còn {timeLeft} ngày
+                        </Typography.Paragraph>
+                    </Col>
+                </Row>
                 <Row
                     style={{
                         marginLeft: '1.5rem',
@@ -78,28 +98,33 @@ const Job = ({ item, index, data }) => {
                                 marginRight: '0.5rem',
                             }}
                         />
-                        5,000,000 VNĐ
+                        {`${item.salary.toString()}000000`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' VNĐ'}
                     </Row>
                     <Row
                         style={{
-                            width: '100%'
+                            width: '100%',
+                            alignItems: 'flex-end'
                         }}
                     >
-                        <Location name={'Hà Nội'}/>
-                        <Location name={'TP Hồ Chí Minh'}/>
-                        <Location name={'Đà Nẵng'}/>
-                        <Location name={'Hải Phòng'}/>
-                        <Location name={'Ninh Bình'}/>
+                        {
+                            citiesShow.map(city => (<Location key={city.id} name={city.name} />))
+                        }
                     </Row>
                 </Row>
             </Row>
         </Col>
     )
+}
+
+const Job = ({ item, data }) => {
+
+    const nextItem = data.find(itemm => itemm.id === item.id + 1);
+    const themeToken = theme.useToken().token;
 
     return (
         <Row>
-            <JobItem item={item} />
-            {nextItem && <JobItem item={nextItem} />}
+            <JobItem item={item} backgroundColor={themeToken.componentBackground} cities={cities} />
+            {nextItem && <JobItem item={nextItem} backgroundColor={themeToken.componentBackground} cities={cities} />}
         </Row>
     )
 }
