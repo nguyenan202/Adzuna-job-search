@@ -2,7 +2,7 @@
 Job Search webapp
 
 # Auth
-    - [x] Login
+    - [x] Login :heavy_check_mark:
     - [x] Logout
     - [x] Register
     - [x] Third Login
