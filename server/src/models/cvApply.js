@@ -2,15 +2,20 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
 import Post from './post';
 import User from "./user";
+import CV from "./cv";
 
-const CvUploaded = sequelize.define('CvUploaded', {
+const CvApply = sequelize.define('CvApply', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    picturePath: {
-        type: DataTypes.STRING
+    CVId: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: CV,
+            key: 'id'
+        }
     },
     description: {
         type: DataTypes.TEXT
@@ -22,6 +27,7 @@ const CvUploaded = sequelize.define('CvUploaded', {
          * 2: Accepted
          */
         type: DataTypes.TINYINT,
+        defaultValue: 0
     },
     comment: {
         //for Admin
@@ -46,4 +52,4 @@ const CvUploaded = sequelize.define('CvUploaded', {
 
 await sequelize.sync();
 
-export default CvUploaded;
+export default CvApply;

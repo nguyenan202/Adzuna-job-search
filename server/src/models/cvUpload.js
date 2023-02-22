@@ -1,30 +1,23 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
-import CV from './cv';
+import User from "./user";
 
-const Education = sequelize.define('Education', {
+const cvUpload = sequelize.define('cvUpload', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: truev
     },
     name: {
         type: DataTypes.STRING
     },
-    description: {
+    picturePath: {
         type: DataTypes.TEXT
     },
-    startAt: {
-        type: DataTypes.STRING(10)
-    },
-    endAt: {
-        type: DataTypes.STRING(10),
-        allowNull: true
-    },
-    CVId: {
+    userId: {
         type: DataTypes.INTEGER,
         references: {
-            model: CV,
+            model: User,
             key: 'id'
         }
     }
@@ -32,4 +25,4 @@ const Education = sequelize.define('Education', {
 
 await sequelize.sync();
 
-export default Education;
+export default cvUpload;

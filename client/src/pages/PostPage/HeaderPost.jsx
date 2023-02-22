@@ -1,15 +1,16 @@
 import { Button, Col, Image, Modal, Row, Tag, Typography, theme } from "antd";
-import { BiPaperPlane, BiTimeFive, BiWorld } from "react-icons/bi";
+import { BiPaperPlane, BiTimeFive } from "react-icons/bi";
 import { FiSettings } from "react-icons/fi";
 import useMediaQuery from "../../hooks/useMediaQuery";
 
 import styles from './styles.module.scss';
-import { useState } from "react";
 import DatePickField from "../../components/DatePickField";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import ModalApplyJob from "./ModalApplyJob";
+import { useState } from "react";
 
-const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
+const HeaderPost = ({ post, user, keyReRender, setKeyReRender, applies }) => {
 
     const [showModalUpdateDate, setShowModalUpdateDate] = useState(false);
     const [date, setDate] = useState({
@@ -17,6 +18,7 @@ const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
         value: null
     })
     const [loadingChangeDate, setLoadingChangeDate] = useState(false);
+    const [showModalApply, setShowModalApply] = useState(false);
 
     const themeToken = theme.useToken().token;
     const token = useSelector(state => state.token);
@@ -25,12 +27,13 @@ const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
     const breakpointTablet = useMediaQuery('(max-width: 762px)');
     const breakpointMobile = useMediaQuery('(max-width: 576px)');
 
+    // Kiểm tra xem có phải chủ bài đăng k
     const isPostUpper = user.id === post.Conpany.userId;
+    // Kiểm tra xem bài đăng đã quá hạn chưa
     const isOutDate = Math.floor((new Date(post.endAt) - new Date()) / (1000 * 60 * 60 * 24)) + 1 <= 0;
 
-
     const handleSelectDate = (d) => {
-        const dateSelect = d.toISOString().slice(0,10);
+        const dateSelect = d.toISOString().slice(0, 10);
 
         // Ngày gia hạn phải lớn hơn ngày hiện tại
         const isValidDate = Math.floor(new Date(dateSelect) - new Date()) / (1000 * 60 * 60 * 24) > 0;
@@ -64,9 +67,9 @@ const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
                 openNotificationWithIcon('success', 'Cập nhật thành công');
                 setLoadingChangeDate(false);
                 setShowModalUpdateDate(false);
-                setKeyReRender(keyReRender+1);
+                setKeyReRender(keyReRender + 1);
             }
-        }catch(err) {
+        } catch (err) {
             openNotificationWithIcon('error', 'Có lỗi, vui lòng thử lại sau');
             setLoadingChangeDate(false);
         }
@@ -118,6 +121,15 @@ const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
                         </Typography.Paragraph>
                     </Col>
                 </Row>
+                {applies.length > 0 && <Row>
+                    <Col
+                        span={24}
+                    >
+                        <Typography.Paragraph style={{ margin: 0, display: 'flex', alignItems: 'center', fontSize: '1rem' }}>
+                            {`Bạn đã ứng tuyển công việc này lần cuối ${applies[applies.length - 1].createdAt.slice(0, 10)}`}
+                        </Typography.Paragraph>
+                    </Col>
+                </Row>}
             </Col>
 
             <Col
@@ -133,7 +145,12 @@ const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
                     {isOutDate ?
                         <Tag color="red" style={{ width: '100%', fontSize: '1rem', margin: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Đã hết hạn</Tag>
                         :
-                        <Tag color="green" style={{ width: '100%', fontSize: '1rem', margin: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Có thể ứng tuyển</Tag>
+                        (
+                            post.status === 1 ?
+                                <Tag color="green" style={{ width: '100%', fontSize: '1rem', margin: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Có thể ứng tuyển</Tag>
+                                :
+                                <Tag color="red" style={{ width: '100%', fontSize: '1rem', margin: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Hiện chưa thể ứng tuyển</Tag>
+                        )
                     }
                 </Row>
                 {isPostUpper ?
@@ -166,7 +183,8 @@ const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
                             justifyContent: 'center',
                             marginTop: '0.5rem'
                         }}
-                        disabled={isOutDate}
+                        disabled={isOutDate || applies.length >= 3 || post.status !== 1}
+                        onClick={() => setShowModalApply(true)}
                     >
                         <BiPaperPlane style={{ marginRight: '0.5rem' }} />
                         Ứng tuyển ngay
@@ -192,6 +210,13 @@ const HeaderPost = ({ post, user, keyReRender, setKeyReRender }) => {
                     isInvalidMessage={date.error && 'Ngày gia hạn phải lớn hơn ngày hiện tại'}
                 />
             </Modal>
+
+            {/* Modal apply job */}
+            <ModalApplyJob
+                post={post}
+                isShow={showModalApply}
+                setIsShow={setShowModalApply}
+            />
         </Row>
     )
 }

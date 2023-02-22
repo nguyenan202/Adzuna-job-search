@@ -10,8 +10,8 @@ import { genders } from "../UpPostPage/UpPost";
 import TextAreaField from "../../components/TextAreaField";
 import { socket } from "../../App";
 import styled from "styled-components";
-import useMediaQuery from "../../hooks/useMediaQuery";
 import { useNavigate } from "react-router-dom";
+import ModalDetail from "./ModalDetail";
 
 export const shortText = (text, maxLength) => {
     if (text.length <= maxLength) return text;
@@ -26,8 +26,8 @@ const MyTable = styled(Table)`
     }
 `
 
-const tagscolor = ['default', 'success', 'error']
-const tagsText = ['Đang chờ', 'Đã duyệt', 'Bị từ chối']
+export const tagscolor = ['default', 'success', 'error']
+export const tagsText = ['Đang chờ', 'Đã duyệt', 'Bị từ chối']
 
 const ManagePostPage = ({ user }) => {
 
@@ -41,7 +41,6 @@ const ManagePostPage = ({ user }) => {
     const token = useSelector(state => state.token);
     const navigate = useNavigate();
 
-    const breakpointMobile = useMediaQuery('(max-width: 576px)');
     
     useEffect(() => {
         const fetching = async () => {
@@ -127,7 +126,7 @@ const ManagePostPage = ({ user }) => {
             render: (post) => {
                 const isOutDate = Math.floor((new Date(post.endAt) - new Date()) / (1000 * 60 * 60 * 24)) + 1 <= 0;
                 
-                return <Tag color={!isOutDate || post.status !== 1 ? 'green' : 'red'}>{isOutDate ? 'Hết hạn' : post.status !== 1 ? 'Không khả dụng' : 'Đang chạy'}</Tag>
+                return <Tag color={post.status !== 1 ? 'red' : !isOutDate ? 'green' : 'red'}>{isOutDate ? 'Hết hạn' : post.status !== 1 ? 'Không khả dụng' : 'Đang chạy'}</Tag>
             }
         },
         {
@@ -215,133 +214,13 @@ const ManagePostPage = ({ user }) => {
 
 
             {/* Modal show detail post */}
-            {selectedPost && <Modal
-                open={showModal}
-                onCancel={() => setShowModal(false)}
-                onOk={() => setShowModal(false)}
-                width={692}
-                style={{ top: '2rem' }}
-            >
-                <Row>
-                    <Typography.Title>
-                        {selectedPost.title}
-                    </Typography.Title>
-                </Row>
-                <Row className={styles.full_width} justify='center'>
-                    <Tag
-                        color={tagscolor[selectedPost.status]}
-                        style={{ padding: '0.25rem 1rem', marginBottom: '1rem' }}
-                    >
-                        {tagsText[selectedPost.status]}
-                    </Tag>
-                </Row>
-                <Row style={{ justifyContent: 'flex-end' }}>
-                    <Button
-                        size='large'
-                        style={{
-                            width: '100%',
-                            backgroundColor: themeToken.mainColor,
-                            color: themeToken.textColor
-                        }}
-                        onClick={() => navigate(`/post/${selectedPost.id}`)}
-                    >
-                        Xem hồ sơ
-                    </Button>
-                </Row>
-                <Row className={styles.full_width} justify='space-between'>
-                    {selectedPost.status === 2 &&
-                        <TextAreaField
-                            field='Lý do bị từ chối'
-                            value={selectedPost.reason}
-                            span={24}
-                            rows={4}
-                            readOnly
-                        />
-                    }
-                    <MyFieldInput
-                        field='Ngày tạo'
-                        value={selectedPost.startAt}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Ngày kết thúc'
-                        value={selectedPost.endAt}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Mức lương'
-                        value={`${selectedPost.salary} VNĐ`}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Số lượng cần tuyển'
-                        value={selectedPost.quantity}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Giới tính'
-                        value={genders.find(gender => gender.id === selectedPost.gender).name}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Lĩnh vực'
-                        value={selectedPost.Specialization.name}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Hình thức làm việc'
-                        value={selectedPost.WorkingTime.name}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Cấp độ'
-                        value={selectedPost.Level.name}
-                        readOnly
-                        span={24}
-                    />
-                    <MyFieldInput
-                        field='Kinh nghiệm'
-                        value={selectedPost.ExperiencePost.name}
-                        readOnly
-                        span={24}
-                    />
-                    <TextAreaField
-                        field='Địa điểm làm việc'
-                        value={addresses}
-                        readOnly
-                        rows={selectedPost.PostAddresses.length + 1}
-                        span={24}
-                    />
-                    <TextAreaField
-                        field='Mô tả công việc'
-                        value={selectedPost.description}
-                        readOnly
-                        rows={5}
-                        span={24}
-                    />
-                    <TextAreaField
-                        field='Yêu cầu ứng viên'
-                        value={selectedPost.requirments}
-                        readOnly
-                        rows={5}
-                        span={24}
-                    />
-                    <TextAreaField
-                        field='Quyền lợi'
-                        value={selectedPost.benefits}
-                        readOnly
-                        rows={5}
-                        span={24}
-                    />
-                </Row>
-            </Modal>}
+            {selectedPost && 
+                <ModalDetail
+                    isShow={showModal}
+                    setIsShow={setShowModal}
+                    selectedPost={selectedPost}
+                />
+            }
         </Row>
     )
 }

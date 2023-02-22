@@ -116,9 +116,8 @@ const JobItem = ({ item, backgroundColor, cities }) => {
     )
 }
 
-const Job = ({ item, data }) => {
+const Job = ({ item, nextItem }) => {
 
-    const nextItem = data.find(itemm => itemm.id === item.id + 1);
     const themeToken = theme.useToken().token;
 
     return (

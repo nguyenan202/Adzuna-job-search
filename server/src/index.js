@@ -20,6 +20,8 @@ import specializationRouter from './routes/specialization';
 import postRouter from './routes/post';
 import postAddressRouter from './routes/postAddress';
 import rateRouter from './routes/rate';
+import cvRouter from './routes/cv';
+import cvApplyRouter from './routes/cvApply';
 
 const app = express();
 
@@ -50,6 +52,8 @@ app.use('/specialization', specializationRouter);
 app.use('/post', postRouter);
 app.use('/post-address', postAddressRouter);
 app.use('/rate', rateRouter);
+app.use('/cv', cvRouter);
+app.use('/cv-apply', cvApplyRouter);
 
 //io connect
 io.on('connection', (socket) => {

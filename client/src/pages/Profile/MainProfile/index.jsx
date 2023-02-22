@@ -7,6 +7,7 @@ import Profile from "./Profile";
 import Security from "./Security";
 import useMediaQuery from "../../../hooks/useMediaQuery";
 import Company from "./Company";
+import HistoryApply from "./HistoryApply";
 
 
 const MainProfile = ({ currentOptionIndex, setCurrentOptionIndex, layout, user, options }) => {
@@ -28,6 +29,10 @@ const MainProfile = ({ currentOptionIndex, setCurrentOptionIndex, layout, user, 
             user={user}
         />,
         <Company
+            user={user}
+            layout={layout}
+        />,
+        <HistoryApply
             user={user}
             layout={layout}
         />

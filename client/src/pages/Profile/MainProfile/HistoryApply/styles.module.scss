@@ -1,0 +1,17 @@
+.container {
+    padding: 2rem 4rem 2rem 2rem;
+
+    .sub_container {
+        padding: 1rem;
+        border-radius: 4px;
+
+        .title {
+            font-size: 2rem;
+            width: 100%;
+        }
+
+        .table_history {
+            width: 100%;
+        }
+    }
+}

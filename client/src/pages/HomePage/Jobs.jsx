@@ -4,7 +4,8 @@ import Job from './Job'
 
 const Jobs = ({ posts, isLoading }) => {
 
-    return (
+    
+    return (posts &&
         <Row
             className={styles.container}
         >
@@ -15,7 +16,7 @@ const Jobs = ({ posts, isLoading }) => {
                 pagination={{ pageSize: 6 }}
                 loading={isLoading}
                 dataSource={posts}
-                renderItem={(item,index) => ((index % 2 === 0) && <Job item={item} index={index} data={posts}/>)}
+                renderItem={(item,index) => ((index % 2 === 0) && <Job item={item} nextItem={posts[posts.findIndex(post => post.id === item.id)+1]}/>)}
             />
         </Row>
     )

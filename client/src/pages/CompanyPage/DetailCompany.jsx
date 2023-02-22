@@ -38,8 +38,8 @@ const DetailCompany = ({ company }) => {
 
     const breakpointTablet = useMediaQuery('(max-width: 762px)');
 
-    const avgStar = company.Rates.reduce((cur, next) => cur + next.star, 0) / company.Rates.length;
-
+    const avgStar = (company.Rates.reduce((cur, next) => cur + next.star, 0) / company.Rates.length).toFixed(1);
+    
     const handleShowMore = () => {
         setRates([...rates, ...company.Rates.slice(count, count + 3)]);
         setCount(count + 3);
@@ -111,10 +111,10 @@ const DetailCompany = ({ company }) => {
                         <Rate
                             allowHalf
                             disabled
-                            defaultValue={avgStar}
+                            defaultValue={parseFloat(avgStar) || 0}
                         />
                         <Typography.Paragraph style={{ margin: '0 0 0 0.5rem' }}>
-                            {`(${avgStar || 0})`}
+                            {`(${parseFloat(avgStar) || 0})`}
                         </Typography.Paragraph>
                     </Row>
                 </Row>

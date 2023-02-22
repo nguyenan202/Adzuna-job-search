@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { MdOutlineHomeWork } from "react-icons/md";
 import { RiUserStarFill } from 'react-icons/ri';
 import { genders } from "../UpPostPage/UpPost";
+import { BsGenderAmbiguous } from "react-icons/bs";
 
 const MyItem = ({ icon, title, value, span }) => {
 
@@ -40,7 +41,6 @@ const DetailPost = ({ post }) => {
 
     const themeToken = theme.useToken().token;
 
-    const breakpointMobile = useMediaQuery('(max-width: 576px)');
     const breakpointTablet = useMediaQuery('(max-width: 762px)');
     
     const listAddress = post.PostAddresses.map((address,index) => (
@@ -104,7 +104,7 @@ const DetailPost = ({ post }) => {
                             span={12}
                         />
                         <MyItem
-                            icon={<FaMedal style={{ fontSize: '2rem', color: themeToken.mainColor }} />}
+                            icon={<BsGenderAmbiguous style={{ fontSize: '2rem', color: themeToken.mainColor }} />}
                             title='Giới tính'
                             value={genders.find(gender => gender.id === post.gender).name}
                             span={12}
@@ -227,7 +227,7 @@ const DetailPost = ({ post }) => {
                         >
                             <Typography.Paragraph style={{ margin: 0, display: 'flex', alignItems: 'center', fontSize: '1rem', opacity: '0.8' }}>
                                 <BiWorld style={{ marginRight: '0.5rem' }} />
-                                <a href={post.Conpany.url} target="_blank">{post.Conpany.url}</a>
+                                <a href={post.Conpany.url} target="_blank" rel='noreferrer'>{post.Conpany.url}</a>
                             </Typography.Paragraph>
                         </Col>
                         <Col

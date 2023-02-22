@@ -94,25 +94,13 @@ const UpPost = ({ numberPostUp, company, keyReRender, setKeyReRender }) => {
     const [addresses, setAddresses] = useState([]);
     const [selectedAddresses, setSelectedAddresses] = useState(null);
     const [state, dispatch] = useReducer(postReducer, initState);
-    const [api, contextHolder] = notification.useNotification();
-    
+
     const themeToken = theme.useToken().token;
     const token = useSelector(state => state.token);
+    const openNotificationWithIcon = useSelector(state => state.notification);
 
     const breakPointTablet = useMediaQuery('(max-width: 692px)');
 
-    const openNotificationWithIcon = (type, message) => {
-        type === 'success' && api[type]({
-            message: message,
-            duration: 2,
-        });
-
-        type === 'error' && api[type]({
-            message: message,
-            duration: 2,
-        })
-    };
-    
     useEffect(() => {
         const fetching = async () => {
             const response_jobs = await axios.get(`${process.env.REACT_APP_API_URL}/job`, {
@@ -170,18 +158,18 @@ const UpPost = ({ numberPostUp, company, keyReRender, setKeyReRender }) => {
     }, [jobIdSelected])
 
     const handleSubmit = async () => {
-        const objArr = Object.entries(state).filter(([key,value]) => key !== 'startAt');
-        
+        const objArr = Object.entries(state).filter(([key, value]) => key !== 'startAt');
+
         // Check all field is Oke with field not event change
-        const isAllFieldOke_1 = !objArr.some(([key,value]) => !value.error && (value.value === '' || !value.value));
+        const isAllFieldOke_1 = !objArr.some(([key, value]) => !value.error && (value.value === '' || !value.value));
         // Check all field have no error
-        const isAllFieldOke_2 = objArr.every(([key,value]) => !value.error);
+        const isAllFieldOke_2 = objArr.every(([key, value]) => !value.error);
         // Check addresses not empty
         const isAllFieldOke_3 = selectedAddresses ? selectedAddresses.length > 0 : false;
-        
+
         // if error
         if (!isAllFieldOke_1) {
-            objArr.forEach(([key,value]) => {
+            objArr.forEach(([key, value]) => {
                 (!value.error && (value.value === '' || !value.value)) && dispatch({
                     type: `update-${key}`,
                     payload: null
@@ -196,13 +184,13 @@ const UpPost = ({ numberPostUp, company, keyReRender, setKeyReRender }) => {
         if (isAllFieldOke_1 && isAllFieldOke_2 && isAllFieldOke_3) {
             const objArr = Object.entries(state);
             // Remove error, just keep value
-            const newObjArr = objArr.map(([key,value]) => [key, typeof value === 'string' ? value : value.value])
+            const newObjArr = objArr.map(([key, value]) => [key, typeof value === 'string' ? value : value.value])
 
             // Process Array to Object
-            let data = newObjArr.reduce((cur,next) => ({
+            let data = newObjArr.reduce((cur, next) => ({
                 ...cur,
                 [next[0]]: next[1]
-            }),{})
+            }), {})
 
             //Format salary
             data = {
@@ -210,7 +198,7 @@ const UpPost = ({ numberPostUp, company, keyReRender, setKeyReRender }) => {
                 quantity: parseInt(data.quantity),
                 companyId: company.id
             }
-            
+
             try {
                 setIsLoading(true);
                 const response = await axios.post(`${process.env.REACT_APP_API_URL}/post`, data, {
@@ -220,11 +208,11 @@ const UpPost = ({ numberPostUp, company, keyReRender, setKeyReRender }) => {
                 })
 
 
-                if(response.data.status) {
+                if (response.data.status) {
                     const response_postAddress = await axios.post(`${process.env.REACT_APP_API_URL}/post-address`, {
                         postId: response.data.post.id,
                         data: selectedAddresses
-                    },{
+                    }, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -233,20 +221,17 @@ const UpPost = ({ numberPostUp, company, keyReRender, setKeyReRender }) => {
                     if (response_postAddress.data.status) {
                         openNotificationWithIcon('success', 'Đăng tin thành công, vui lòng đợi duyệt');
                         setShowModalLimit(false);
-    
-                        setTimeout(() => {
-                            setKeyReRender(keyReRender+1);
-                        }, 2000)
+                        setKeyReRender(keyReRender + 1);
                     }
                 }
-            }catch(err) {
+            } catch (err) {
                 openNotificationWithIcon('error', 'Có lỗi vui lòng thử lại sau');
             }
-            
+
             setIsLoading(false);
         }
     }
-    
+
     return (
         <Row
             className={styles.sub_container}
@@ -492,12 +477,9 @@ const UpPost = ({ numberPostUp, company, keyReRender, setKeyReRender }) => {
                     disabled={!numberPostUp > 0 || isLoading}
                     onClick={handleSubmit}
                 >
-                    {isLoading && <Spin indicator={antIcon}/>} Đăng tin
+                    {isLoading && <Spin indicator={antIcon} />} Đăng tin
                 </Button>
             </Row>
-
-            {/* notification */}
-            {contextHolder}
 
             {/* Modal limit up post */}
             {numberPostUp && <Modal

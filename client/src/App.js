@@ -25,6 +25,8 @@ import ManagePostPageForAdmin from './pages/ManagePostPageForAdmin';
 import CompanyPage from './pages/CompanyPage';
 import PostPage from './pages/PostPage';
 import ListCompanyPage from './pages/ListCompanyPage';
+import ManageCV from './pages/ManageCV';
+import CV from './pages/CvPage';
 
 
 const socket = io.connect(process.env.REACT_APP_API_URL, { query: 'loggeduser=user1' });
@@ -43,7 +45,7 @@ function App() {
   const openNotificationWithIcon = useCallback((type, message) => {
     api[type]({
       message: message,
-      duration: 5
+      duration: 3
     });
   }, [api]);
 
@@ -100,7 +102,7 @@ function App() {
       socket.off(`updated-role-userId-${user.id}`);
     }
   }, [user, token, dispatch, navigate, openNotificationWithIcon])
-  
+
   // console.log(token);
   // console.log(user);
   return (
@@ -116,15 +118,16 @@ function App() {
           <Route path='/setting' element={user ? <Setting /> : <Navigate to='/login' />} />
           <Route path='/profile' element={user ? <Profile user={user} /> : <Navigate to='/login' />} />
           <Route path='/up-post' element={user ? <UpPostPage user={user} /> : <Navigate to='/login' />} />
-          <Route path='/manage-post' element={user ? <ManagePostPage user={user} /> : <Navigate to='/login'/>}/>
-          <Route path='/manage-post-admin' element={user ? <ManagePostPageForAdmin user={user}/> : <Navigate to='/login'/>}/>
-          <Route path='/company/:id' element={user ? <CompanyPage user={user}/> : <Navigate to='/login'/>}/>
-          <Route path='/post/:id' element={user ? <PostPage/> : <Navigate to='/login'/>}/>
-          <Route path='/list-company' element={user ? <ListCompanyPage/> : <Navigate to='/login'/>}/>
+          <Route path='/manage-post' element={user ? <ManagePostPage user={user} /> : <Navigate to='/login' />} />
+          <Route path='/manage-post-admin' element={user ? <ManagePostPageForAdmin user={user} /> : <Navigate to='/login' />} />
+          <Route path='/company/:id' element={user ? <CompanyPage user={user} /> : <Navigate to='/login' />} />
+          <Route path='/post/:id' element={user ? <PostPage /> : <Navigate to='/login' />} />
+          <Route path='/list-company' element={user ? <ListCompanyPage /> : <Navigate to='/login' />} />
+          <Route path='/manage-cv' element={user ? <ManageCV /> : <Navigate to='/login' />} />
+          <Route path='/cv/:id' element={user ? <CV /> : <Navigate to='/login' />} />
+          <Route path='/cv/:id/view-only/:viewOnly' element={user ? <CV/> : <Navigate to='/login'/>} />
         </Routes>
       </>}
-
-
     </div>
   );
 }

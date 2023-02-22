@@ -11,9 +11,6 @@ const Skill = sequelize.define('Skill', {
     name: {
         type: DataTypes.STRING
     },
-    description: {
-        type: DataTypes.STRING(500)
-    },
     CVId: {
         type: DataTypes.INTEGER,
         references: {

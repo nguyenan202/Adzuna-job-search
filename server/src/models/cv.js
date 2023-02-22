@@ -8,8 +8,16 @@ const CV = sequelize.define('CV', {
         primaryKey: true,
         autoIncrement: true
     },
-    title: {
+    name: {
         type: DataTypes.STRING,
+        allowNull: true
+    },
+    position: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    overView: {
+        type: DataTypes.TEXT,
         allowNull: true
     },
     picturePath: {
@@ -21,16 +29,11 @@ const CV = sequelize.define('CV', {
         allowNull: true
     },
     gender: {
-        /**
-         * 0: Male
-         * 1: Female
-         * 2: Other
-         */
-        type: DataTypes.TINYINT,
+        type: DataTypes.STRING(20),
         allowNull: true
     },
     dob: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING(20),
         allowNull: true
     },
     phone: {

@@ -18,6 +18,10 @@ const options = [
     {
         id: 2,
         name: 'Công ty'
+    },
+    {
+        id: 3,
+        name: 'Lịch sử ứng tuyển'
     }
 ]
 
@@ -28,7 +32,7 @@ const Profile = ({ user }) => {
     const breakPointTablet = useMediaQuery('(min-width: 992px)');
 
     return (
-        <Row style={{ height: 'calc(100vh - 66px)', position: 'relative' }}>
+        <Row style={{ height: 'calc(100vh - 67px)', position: 'relative' }}>
             <NavProfile
                 currentOptionIndex={currentOptionIndex}
                 setCurrentOptionIndex={setCurrentOptionIndex}

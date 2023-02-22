@@ -15,10 +15,10 @@ const Experience = sequelize.define('Experience', {
         type: DataTypes.TEXT
     },
     startAt: {
-        type: DataTypes.DATEONLY
+        type: DataTypes.STRING(10)
     },
     endAt: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.STRING(10),
         allowNull: true
     },
     CVId: {

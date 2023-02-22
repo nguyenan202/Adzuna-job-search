@@ -44,9 +44,9 @@ const CompanyForm = ({ company }) => {
         </Col>
     )
     
-    const avgRates = company.Rates.reduce((current, next) => {
+    const avgRates = (company.Rates.reduce((current, next) => {
         return current + next.star
-    }, 0) / company.Rates.length
+    }, 0) / company.Rates.length).toFixed(1)
 
     return (
         <>
@@ -69,10 +69,10 @@ const CompanyForm = ({ company }) => {
                     <Rate
                         allowHalf
                         disabled
-                        defaultValue={avgRates}
+                        defaultValue={parseFloat(avgRates) || 0}
                     />
                     <Typography.Paragraph style={{ margin: '0 0 0 0.5rem' }}>
-                        {`(${avgRates || 0})`}
+                        {`(${parseFloat(avgRates) || 0})`}
                     </Typography.Paragraph>
                 </Row>
 

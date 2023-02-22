@@ -15,6 +15,8 @@ const PostPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [post, setPost] = useState(null);
     const [keyReRender, setKeyReRender] = useState(0);
+    //Số lượng apply vào job của ứng viên
+    const [applies, setApplies] = useState([]);
 
     const user = useSelector(state => state.user);
     const token = useSelector(state => state.token);
@@ -29,8 +31,15 @@ const PostPage = () => {
                     }
                 })
 
-                if (response.data.status) {
+                const response_applies = response.status === 200 && await axios.get(`${process.env.REACT_APP_API_URL}/cv-apply/user/${user.id}/post/${response.data.post.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+
+                if (response.data.status && response_applies.data.status) {
                     setPost(response.data.post);
+                    setApplies(response_applies.data.cvUploaded);
                 }
             } catch (err) {
                 err.response.status === 404 && setPost(null);
@@ -56,6 +65,7 @@ const PostPage = () => {
                         user={user}
                         keyReRender={keyReRender}
                         setKeyReRender={setKeyReRender}
+                        applies={applies}
                     />
 
                     <DetailPost

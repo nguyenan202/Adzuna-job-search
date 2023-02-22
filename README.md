@@ -26,9 +26,9 @@ Job Search webapp
     - [x] Filter, Search Post
     - [ ] Apply Post
 # Resume
-    - [ ] Create Resume
-    - [ ] Export to PDF
-    - [ ] Save Resume
+    - [x] Create Resume
+    - [x] Export to PDF
+    - [x] Save Resume
 # Admin
     - [ ] Dashboard
 # Setting

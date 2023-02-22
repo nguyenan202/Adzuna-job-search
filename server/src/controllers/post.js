@@ -164,7 +164,7 @@ const getAllPostActive = async (req, res) => {
 
         posts = posts.filter(post => {
             const timeLeft = Math.floor((new Date(post.endAt) - new Date()) / (1000 * 60 * 60 * 24)) + 1;
-            return timeLeft >= 0;
+            return timeLeft > 0;
         })
 
         if (posts) return res.status(200).json({
@@ -210,7 +210,8 @@ const getAllPostActiveWithSearch = async (req, res) => {
                 salary: {
                     [Op.between]: [salary_start, salary_end]
                 },
-                specializationId
+                specializationId,
+                status: 1
             },
             include: [{
                 model: Company
@@ -225,7 +226,8 @@ const getAllPostActiveWithSearch = async (req, res) => {
         // filter location
         posts = posts.filter(post => {
             const timeLeft = Math.floor((new Date(post.endAt) - new Date()) / (1000 * 60 * 60 * 24)) + 1;
-            return post.PostAddresses.map(address => address.Address.name).includes(location) && timeLeft >= 0
+            
+            return post.PostAddresses.map(address => address.Address.name).some(address => address.includes(location)) && timeLeft > 0
         })
 
         res.status(200).json({
