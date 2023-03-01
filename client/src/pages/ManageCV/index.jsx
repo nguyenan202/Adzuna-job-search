@@ -1,4 +1,4 @@
-import { Col, Image, Modal, Row, Typography, theme } from "antd"
+import { Button, Col, Image, Input, Modal, Row, Typography, theme } from "antd"
 
 import styles from './styles.module.scss';
 import ItemCV from "./ItemCV";
@@ -8,14 +8,21 @@ import MyFieldInput from "../../components/MyFieldInput";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import SpinLoading from "../../components/SpinLoading";
+import { AiOutlineCloudUpload } from "react-icons/ai";
+import ItemCVUpload from "./ItemCVUpload";
 
 const ManageCV = () => {
 
     const [loadingCreateCV, setLoadingCreateCV] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [loadingUpload, setLoadingUpload] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showModalUpload, setShowModalUpload] = useState(false);
+    const [imageCV, setImageCV] = useState(null);
+    const [cvNameUpload, setCvNameUpload] = useState({ error: false, value: '' })
     const [cvName, setCvName] = useState('');
     const [resumes, setResumes] = useState([]);
+    const [resumesUpload, setResumesUpload] = useState([]);
     const [keyReRender, setKeyReRender] = useState(0);
 
     const themeToken = theme.useToken().token;
@@ -27,20 +34,25 @@ const ManageCV = () => {
     useEffect(() => {
         const fetching = async () => {
             try {
-                setIsLoading(true);
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/cv/user/${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 })
+
+                const response_cvUpload = await axios.get(`${process.env.REACT_APP_API_URL}/cv-upload/user/${user.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                 
-                if (response.status === 200 && response.data.status) {
+                if (response.status === 200 && response.data.status && response_cvUpload.status === 200) {
                     setResumes(response.data.resums)
-                    setIsLoading(false);
+                    setResumesUpload(response_cvUpload.data.allCvUpload);
                 }
             } catch (err) {
-                setResumes([])
-                setIsLoading(false);
+                setResumes([]);
+                setResumesUpload([]);
             }
         }
 
@@ -84,9 +96,51 @@ const ManageCV = () => {
             openNotification('error', 'Có lỗi, vui lòng thử lại sau');
         }
     }
+    
+    const handleUpload = async () => {
+        if (!imageCV) openNotification('error', 'Hãy chọn 1 CV trước khi tải lên')
+        if (cvNameUpload.value === '') setCvNameUpload({
+            ...cvNameUpload,
+            error: true
+        })
+        if (!imageCV || cvNameUpload.value === '') return;
+
+        setLoadingUpload(true);
+        try {
+            const data = new FormData();
+            data.append('name', cvNameUpload.value);
+            data.append('userId', user.id);
+            data.append('picture', imageCV);
+
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/cv-upload`, data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+
+            if (response.status === 200) {
+                openNotification('success', 'Tải CV lên thành công');
+                setShowModalUpload(false);
+                setKeyReRender(keyReRender+1);
+            }
+
+        } catch (err) {
+            openNotification('error', 'Có lỗi, vui lòng thử lại sau');
+        }
+        setLoadingUpload(false);
+    }
 
     const listCV = resumes.map(resume => (
         <ItemCV
+            key={resume.id}
+            resume={resume}
+            keyReRender={keyReRender}
+            setKeyReRender={setKeyReRender}
+        />
+    ))
+
+    const listCVUpload = resumesUpload.map(resume => (
+        <ItemCVUpload
             key={resume.id}
             resume={resume}
             keyReRender={keyReRender}
@@ -116,7 +170,34 @@ const ManageCV = () => {
                 </Row>
             </Row>
 
+            <Row
+                className={styles.sub_container}
+                style={{
+                    backgroundColor: themeToken.componentBackground,
+                    marginTop: '2rem'
+                }}
+            >
+                <Row style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography.Title style={{ margin: 0 }}>
+                        CV đã tải lên
+                    </Typography.Title>
+                    <Button
+                        size='large'
+                        style={{
+                            backgroundColor: themeToken.mainColor,
+                            color: themeToken.textColor
+                        }}
+                        onClick={() => setShowModalUpload(true)}
+                    >
+                        <AiOutlineCloudUpload style={{ marginRight: '0.5rem', fontSize: '1rem' }} /> Tải CV lên
+                    </Button>
+                </Row>
+                <Row style={{ width: '100%' }}>
+                    {listCVUpload}
+                </Row>
+            </Row>
 
+            {/* Modal create CV */}
             <Modal
                 title='Tạo mới CV'
                 open={showModal}
@@ -131,6 +212,57 @@ const ManageCV = () => {
                     placeholder='e.g CV dành cho...'
                     value={cvName}
                     onChange={(e) => setCvName(e.target.value)}
+                />
+            </Modal>
+
+            {/* Modal Upload CV */}
+            <Modal
+                title='Chọn CV bạn muốn tải lên'
+                open={showModalUpload}
+                onOk={handleUpload}
+                confirmLoading={loadingUpload}
+                onCancel={() => setShowModalUpload(false)}
+            >
+                <Button
+                    size='large'
+                    style={{
+                        width: '100%',
+                        margin: '1rem 0',
+                        padding: 0,
+                        height: 'auto',
+                        border: `1px dashed ${themeToken.mainColor}`
+                    }}
+
+                >
+                    <label htmlFor="input-upload-cv" style={{ width: '100%', height: '100%', padding: '1rem 0', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
+                        {imageCV ? <Typography.Text>{imageCV.name}</Typography.Text> :
+                            <>
+                                <AiOutlineCloudUpload style={{ fontSize: '1rem', marginRight: '0.5rem' }} />
+                                <Typography.Text>Chọn 1 CV</Typography.Text>
+                            </>
+                        }
+                    </label>
+                </Button>
+                <Input
+                    id='input-upload-cv'
+                    type="file"
+                    accept=".pdf"
+                    style={{
+                        display: 'none'
+                    }}
+                    onChange={(e) => setImageCV(e.target.files[0])}
+                />
+                <MyFieldInput
+                    size='large'
+                    field='Tên CV'
+                    fieldSize='1rem'
+                    placeholder='e.g CV dành cho...'
+                    value={cvNameUpload.value}
+                    onChange={e => setCvNameUpload({
+                        error: false,
+                        value: e.target.value
+                    })}
+                    isInvalidMessage={cvNameUpload.error && 'Không được bỏ trống trường này'}
                 />
             </Modal>
         </Row>

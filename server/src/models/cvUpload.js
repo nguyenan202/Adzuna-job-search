@@ -2,11 +2,11 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
 import User from "./user";
 
-const cvUpload = sequelize.define('cvUpload', {
+const CvUpload = sequelize.define('CvUpload', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: truev
+        autoIncrement: true
     },
     name: {
         type: DataTypes.STRING
@@ -25,4 +25,4 @@ const cvUpload = sequelize.define('cvUpload', {
 
 await sequelize.sync();
 
-export default cvUpload;
+export default CvUpload;

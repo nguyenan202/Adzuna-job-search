@@ -5,7 +5,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import ModalCreateRole from "../../../components/ModalCreateRole";
 import styles from './styles.module.scss';
-import { socket } from "../../../App";
+import { socket } from '../../../App';
 
 const RoleSetting = () => {
 

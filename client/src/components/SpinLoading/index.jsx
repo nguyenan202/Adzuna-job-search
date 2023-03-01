@@ -1,10 +1,11 @@
 import { Row, Spin } from "antd"
 
 
-const SpinLoading = ({ height }) => {
+const SpinLoading = ({ width, height }) => {
 
     return (
         <Row style={{
+            width: width ? width : '100vw',
             height: height ? height : '100vh',
             justifyContent: 'center',
             alignItems: 'center'

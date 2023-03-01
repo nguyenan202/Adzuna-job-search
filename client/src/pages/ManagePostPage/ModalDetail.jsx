@@ -174,6 +174,13 @@ const ModalDetail = ({ isShow, setIsShow, selectedPost }) => {
         setLoadingConfirmReject(false);
     }
 
+    const handleViewCV = (e) => {
+        if (selectedApply.picturePath) {
+            e.preventDefault();
+            window.open(`${process.env.REACT_APP_API_URL}/images/${selectedApply.picturePath}`, '_blank', 'noopener,noreferrer')
+        } 
+    }
+
     return (
         <>
             <Modal
@@ -204,7 +211,9 @@ const ModalDetail = ({ isShow, setIsShow, selectedPost }) => {
                             backgroundColor: themeToken.mainColor,
                             color: themeToken.textColor
                         }}
-                        onClick={() => navigate(`/post/${selectedPost.id}`)}
+                        onClick={() => {
+                            navigate(`/post/${selectedPost.id}`)
+                        }}
                     >
                         Xem hồ sơ
                     </Button>
@@ -252,6 +261,7 @@ const ModalDetail = ({ isShow, setIsShow, selectedPost }) => {
                         href={`/cv/${selectedApply.CVId}/view-only/${user.id}`}
                         target="_blank"
                         rel='noreferrer'
+                        onClick={handleViewCV}
                     >
                         Xem CV
                     </a>

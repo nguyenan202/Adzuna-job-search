@@ -22,6 +22,10 @@ import postAddressRouter from './routes/postAddress';
 import rateRouter from './routes/rate';
 import cvRouter from './routes/cv';
 import cvApplyRouter from './routes/cvApply';
+import cvUploadRouter from './routes/cvUpload';
+import roomChatRouter from './routes/roomChat';
+import messageRouter from './routes/message';
+import { usersOnline } from './data';
 
 const app = express();
 
@@ -54,13 +58,33 @@ app.use('/post-address', postAddressRouter);
 app.use('/rate', rateRouter);
 app.use('/cv', cvRouter);
 app.use('/cv-apply', cvApplyRouter);
+app.use('/cv-upload', cvUploadRouter);
+app.use('/room-chat', roomChatRouter);
+app.use('/message', messageRouter);
 
 //io connect
 io.on('connection', (socket) => {
-    console.log(`user connected with ID: ${socket.id} And ${socket.handshake.query.loggeduser}`);
+    const userId = socket.handshake.auth.userId;
+    usersOnline.setValue(userId);
+    io.emit(`update-online`, usersOnline.value);
 
     socket.on('disconnect', () => {
-        console.log(`user disconnected with ID: ${socket.id}`);
+        usersOnline.filterValue(userId);
+        io.emit(`update-online`, usersOnline.value);
+    });
+    
+    socket.on('user-online', (id) => {
+        usersOnline.setValue(id);
+        io.emit(`update-online`, usersOnline.value);
+    })
+
+    socket.on('user-offline', (id) => {
+        usersOnline.filterValue(id);
+        io.emit(`update-online`, usersOnline.value);
+    })
+    
+    socket.on(`first-mounted-${userId}`, () => {
+        io.emit(`update-online`, usersOnline.value);
     })
 });
 

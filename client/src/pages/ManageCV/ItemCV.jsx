@@ -48,9 +48,8 @@ const ItemCV = ({ resume, keyReRender, setKeyReRender }) => {
                 openNotification('success', 'Xóa CV thành công')
             }
         }catch(err) {
-            console.log(err);
             setIsLoading(false);
-            openNotification('error', 'Có lỗi, vui lòng thử lại sau')
+            openNotification('error', err.response.data.msg)
         }
     }
 

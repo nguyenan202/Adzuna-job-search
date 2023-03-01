@@ -9,6 +9,7 @@ import axios from "axios";
 
 import { setLogin } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../../App";
 
 const iconStyle = { marginRight: '0.5rem', fontSize: '1.2rem', cursor: 'pointer' }
 
@@ -46,10 +47,13 @@ const LoginForm = ({ setIsLoading }) => {
 
                 const data = await response.data;
 
+                socket.emit(`first-mounted-${data.user.id}`);
+                socket.emit('user-online', data.user.id);
                 dispatch(setLogin({
                     user: data.user,
                     token: data.token
                 }))
+                
                 setIsLoading(false);
                 navigate('/')
             } catch (err) {

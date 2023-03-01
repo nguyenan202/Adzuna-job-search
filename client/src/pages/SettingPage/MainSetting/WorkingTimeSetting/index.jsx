@@ -1,5 +1,4 @@
-import { Button, Modal, Row, Skeleton, Typography, notification, theme } from "antd"
-import { socket } from "../../../../App";
+import { Button, Modal, Row, Skeleton, Typography, notification, theme } from "antd";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -8,7 +7,7 @@ import styles from './styles.module.scss';
 import FieldPostSetting from "../FieldPostSetting";
 import TextArea from "antd/es/input/TextArea";
 import MyFieldInput from "../../../../components/MyFieldInput";
-
+import { socket } from '../../../../App';
 
 
 const WorkingTimeSetting = () => {

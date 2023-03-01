@@ -27,9 +27,9 @@ import PostPage from './pages/PostPage';
 import ListCompanyPage from './pages/ListCompanyPage';
 import ManageCV from './pages/ManageCV';
 import CV from './pages/CvPage';
+import Chat from './components/Chat';
 
-
-const socket = io.connect(process.env.REACT_APP_API_URL, { query: 'loggeduser=user1' });
+export const socket = io.connect(process.env.REACT_APP_API_URL);
 
 function App() {
 
@@ -53,7 +53,7 @@ function App() {
     dispatch(setNotification({
       notification: openNotificationWithIcon
     }))
-  }, [])
+  }, [dispatch, openNotificationWithIcon])
 
   // Check login third
   useEffect(() => {
@@ -92,9 +92,14 @@ function App() {
     }
 
     // Listen event update role
+
     user && socket.on(`updated-roleId-${user.Role.id}`, fetchingUser);
     user && socket.on(`updated-permission-${user.id}`, fetchingUser);
     user && socket.on(`updated-role-userId-${user.id}`, fetchingUser);
+    if (user) {
+      socket.auth = { userId: user.id };
+      socket.connect();
+    }
 
     if (user) return () => {
       socket.off(`updated-roleId-${user.Role.id}`);
@@ -125,14 +130,15 @@ function App() {
           <Route path='/list-company' element={user ? <ListCompanyPage /> : <Navigate to='/login' />} />
           <Route path='/manage-cv' element={user ? <ManageCV /> : <Navigate to='/login' />} />
           <Route path='/cv/:id' element={user ? <CV /> : <Navigate to='/login' />} />
-          <Route path='/cv/:id/view-only/:viewOnly' element={user ? <CV/> : <Navigate to='/login'/>} />
+          <Route path='/cv/:id/view-only/:viewOnly' element={user ? <CV /> : <Navigate to='/login' />} />
         </Routes>
+
+        {user &&
+          <Chat/>
+        }
       </>}
     </div>
   );
 }
 
 export default App;
-export {
-  socket
-}

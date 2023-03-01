@@ -1,4 +1,4 @@
-import { Button, Modal, Row, Typography, theme } from "antd"
+import { Button, Modal, Radio, Row, Typography, theme } from "antd"
 import TextAreaField from "../../components/TextAreaField"
 import { useEffect, useState } from "react"
 import axios from "axios";
@@ -17,23 +17,25 @@ const ModalApplyJob = ({ post, isShow, setIsShow }) => {
     const [description, setDescription] = useState('');
     const [isEmptyCV, setIsEmptyCV] = useState(false);
     const [isEmptyDescription, setIsEmptyDescription] = useState(false);
+    const [typeCV, setTypeCV] = useState(0);
 
     const user = useSelector(state => state.user);
     const token = useSelector(state => state.token);
     const themeToken = theme.useToken().token;
     const openNotification = useSelector(state => state.notification);
-
+    
     useEffect(() => {
         const fetching = async () => {
+            const typeCVFetching = typeCV === 0 ? 'cv' : 'cv-upload'
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/cv/user/${user.id}`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/${typeCVFetching}/user/${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 })
 
-                if (response.status === 200 && response.data.status) {
-                    setCvs(response.data.resums)
+                if (response.status === 200) {
+                    setCvs(response.data.resums || response.data.allCvUpload)
                 }
             } catch (err) {
                 setCvs([])
@@ -41,21 +43,33 @@ const ModalApplyJob = ({ post, isShow, setIsShow }) => {
         }
 
         setFetchLoading(true);
+        setCvs([]);
         fetching().then(() => {
             setFetchLoading(false);
         })
-    }, [token, user.id])
+    }, [token, user.id, typeCV])
 
     const handleApply = async () => {
         if (description === '') setIsEmptyDescription(true);
         if (!cvIdSelected) setIsEmptyCV(true);
         if (description === '' || !cvIdSelected) return;
 
-        const data = {
-            CVId: cvIdSelected,
+        let data = {
             description,
             userId: user.id,
             postId: post.id
+        }
+
+        if (typeCV === 0) {
+            data = {
+                ...data,
+                CVId: cvIdSelected
+            }
+        } else if (typeCV === 1) {
+            data = {
+                ...data,
+                picturePath: cvs.find(cv => cv.id === cvIdSelected).picturePath
+            }
         }
 
         try {
@@ -76,7 +90,13 @@ const ModalApplyJob = ({ post, isShow, setIsShow }) => {
         setIsLoading(false);
     }
 
-    return (fetchLoading ? <SpinLoading /> :
+    const handleOpenCVPDF = (e) => {
+        e.preventDefault();
+        const cvSelected = cvs.find(cv => cv.id === cvIdSelected);
+        window.open(`${process.env.REACT_APP_API_URL}/images/${cvSelected.picturePath}`, '_blank', 'noopener,noreferrer')
+    }
+    
+    return (
         <Modal
             open={isShow}
             onCancel={() => setIsShow(false)}
@@ -97,6 +117,17 @@ const ModalApplyJob = ({ post, isShow, setIsShow }) => {
                 }}
                 isInvalidMessage={isEmptyDescription && 'Hãy viết một chút về bản thân để nhà tuyển dụng hiểu được về bạn'}
             />
+            <Radio.Group
+                defaultValue={typeCV}
+                buttonStyle="solid"
+                onChange={e => {
+                    setCvIdSelected(null);
+                    setTypeCV(e.target.value);
+                }}
+            >
+                <Radio.Button value={0}>CV Adzuna</Radio.Button>
+                <Radio.Button value={1}>CV tải lên</Radio.Button>
+            </Radio.Group>
             <SelectField
                 field='CV'
                 fieldSize='1.2rem'
@@ -105,6 +136,7 @@ const ModalApplyJob = ({ post, isShow, setIsShow }) => {
                     setIsEmptyCV(false);
                     setCvIdSelected(id)
                 }}
+                notFoundContent={fetchLoading ? <SpinLoading height='auto'/> : 'Không có dữ liệu'}
                 isInvalidMessage={isEmptyCV && 'Hãy chọn 1 CV để có thể ứng tuyển'}
             />
             {cvIdSelected && <Row
@@ -126,6 +158,7 @@ const ModalApplyJob = ({ post, isShow, setIsShow }) => {
                     href={`/cv/${cvIdSelected}/view-only/${user.id}`}
                     target="_blank"
                     rel='noreferrer'
+                    onClick={typeCV === 1 ? handleOpenCVPDF : () => {}}
                 >
                     Xem CV
                 </a>

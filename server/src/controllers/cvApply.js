@@ -9,6 +9,7 @@ const createCvUpload = async (req, res) => {
     try {
         const {
             CVId,
+            picturePath,
             description,
             userId,
             postId
@@ -16,6 +17,7 @@ const createCvUpload = async (req, res) => {
 
         const cvUploadCreated = await CvApply.create({
             CVId,
+            picturePath,
             description,
             userId,
             postId

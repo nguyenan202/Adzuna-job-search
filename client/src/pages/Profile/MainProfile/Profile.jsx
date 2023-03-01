@@ -181,7 +181,7 @@ const Profile = ({ layout, user }) => {
         </Col>
     )
 
-
+    
     return (
         <Col
             className={styles.container}

@@ -1,16 +1,19 @@
 import { Button, Col, Image, Modal, Rate, Row, Typography, theme } from "antd";
 import { BiWorld } from 'react-icons/bi';
 import { FaHospitalUser } from 'react-icons/fa';
+import { BsFillChatDotsFill } from 'react-icons/bs';
 
 import styles from './styles.module.scss';
 import useMediaQuery from "../../hooks/useMediaQuery";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import TextAreaField from "../../components/TextAreaField";
 import axios from "axios";
+import { addBoxChat } from "../../redux/store";
 
 const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
 
+    const [isLoadingChat, setIsLoadingChat] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showModalRate, setShowModalRate] = useState(false);
     const [star, setStar] = useState(0);
@@ -18,15 +21,16 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
         error: false,
         value: ''
     });
-    
+
     const user = useSelector(state => state.user);
     const token = useSelector(state => state.token);
     const openNotification = useSelector(state => state.notification);
     const themeToken = theme.useToken().token;
+    const dispatch = useDispatch();
 
     const breakpointTablet = useMediaQuery('(max-width: 762px)');
     const breakpointMobile = useMediaQuery('(max-width: 576px)');
-
+    
     const handleRate = async () => {
 
         if (star === 0) return openNotification('error', 'Vui lòng đánh giá sao')
@@ -35,7 +39,7 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
             ...comment,
             error: true
         })
-        
+
         try {
             setIsLoading(true);
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/rate`, {
@@ -43,7 +47,7 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
                 comment: comment.value,
                 companyId: company.id,
                 userId: user.id
-            },{
+            }, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -55,18 +59,37 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
                 setShowModalRate(false);
                 setStar(0);
                 setComment('');
-                setKeyReRender(keyReRender+1);
+                setKeyReRender(keyReRender + 1);
             }
 
             if (response.status === 201) {
                 openNotification('warning', response.data.message);
                 setIsLoading(false);
             }
-        }catch(err) {
+        } catch (err) {
             console.log(err);
             openNotification('error', 'Có lỗi, vui lòng thử lại sau')
             setIsLoading(false);
         }
+    }
+
+    const handleAddChatBox = async () => {
+        setIsLoadingChat(true);
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/room-chat`, {
+                userId1: user.id,
+                userId2: company.userId
+            },{
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+
+            if (response.status === 200) dispatch(addBoxChat({ chat: response.data.id }))
+        } catch(err) {
+            openNotification('error', 'Có lỗi, vui lòng thử lại sau');
+        }
+        setIsLoadingChat(false);
     }
 
     return (
@@ -104,7 +127,7 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
                     >
                         <Typography.Paragraph style={{ margin: 0, display: 'flex', alignItems: 'center', fontSize: '1rem', opacity: '0.8' }}>
                             <BiWorld style={{ marginRight: '0.5rem' }} />
-                            <a href={company.url} target="_blank">{company.url}</a>
+                            <a href={company.url} target="_blank" rel="noreferrer">{company.url}</a>
                         </Typography.Paragraph>
                     </Col>
                     <Col
@@ -125,17 +148,37 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
                 }}
             >
                 {user.id !== company.userId &&
-                    <Button
-                        size='large'
-                        style={{
-                            backgroundColor: themeToken.mainColor,
-                            color: themeToken.textColor,
-                            width: '100%'
-                        }}
-                        onClick={() => setShowModalRate(true)}
-                    >
-                        Viết đánh giá
-                    </Button>
+                    <>
+                        <Button
+                            size='large'
+                            style={{
+                                backgroundColor: themeToken.mainColor,
+                                color: themeToken.textColor,
+                                width: '100%'
+                            }}
+                            onClick={() => setShowModalRate(true)}
+                        >
+                            Viết đánh giá
+                        </Button>
+                        <Button
+                            size='large'
+                            style={{
+                                backgroundColor: themeToken.mainColor,
+                                color: themeToken.textColor,
+                                width: '100%',
+                                margin: '1rem 0',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                opacity: isLoadingChat && 0.8
+                            }}
+                            onClick={handleAddChatBox}
+                            disabled={isLoadingChat}
+                        >
+                            <BsFillChatDotsFill style={{ marginRight: '0.5rem' }}/>
+                            Chat
+                        </Button>
+                    </>
                 }
             </Col>
 
@@ -168,7 +211,7 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
                     rows={5}
                     value={comment.value}
                     isInvalidMessage={comment.error && 'Không được để trống'}
-                    onChange={e => setComment({ error: false, value: e.target.value})}
+                    onChange={e => setComment({ error: false, value: e.target.value })}
                 />
             </Modal>
         </Row>

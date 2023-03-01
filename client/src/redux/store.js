@@ -7,7 +7,8 @@ import {
 const initialState = {
     user: null,
     token: null,
-    notification: null
+    notification: null,
+    chats: []
 }
 
 const authSlice = createSlice({
@@ -27,6 +28,18 @@ const authSlice = createSlice({
         },
         setNotification: (state, action) => {
             state.notification = action.payload.notification
+        },
+        addBoxChat: (state, action) => {
+            if (state.chats.find(chat => action.payload.chat === chat)) return;
+            state.chats.length >= 3 && state.chats.shift()
+
+            state.chats.push(action.payload.chat);
+        },
+        removeBoxChat: (state, action) => {
+            state.chats = state.chats.filter(box => box !== action.payload.chat);
+        },
+        clearBoxChat: (state) => {
+            state.chats = [];
         }
     }
 })
@@ -35,12 +48,15 @@ export const {
     setLogin,
     setLogout,
     setUser,
-    setNotification
+    setNotification,
+    addBoxChat,
+    removeBoxChat,
+    clearBoxChat
 } = authSlice.actions
 
-const authSliceReducer = authSlice.reducer
+const authSliceReducer = authSlice.reducer;
 
-const persistConfig = { key: 'adzuna', storage, version: 1 };
+const persistConfig = { key: 'adzuna', storage, version: 1, whitelist: ['user', 'token', 'notification'] };
 const persistedReducer = persistReducer(persistConfig, authSliceReducer);
 
 const store = configureStore({

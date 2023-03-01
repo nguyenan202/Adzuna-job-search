@@ -51,7 +51,6 @@ const createCV = async (req, res) => {
     } catch (err) {
         res.status(500).json({
             status: false,
-            message: err
         })
     }
 }
@@ -129,34 +128,38 @@ const getCvById = async (req, res) => {
 
 const deleteResume = async (req, res) => {
     try {
-        const {
-            id
-        } = req.body;
+        const result = await sequelize.transaction(async (t) => {
 
-        Education.destroy({ where: { CVId: id } });
-        Skill.destroy({ where: { CVId: id } });
-        Experience.destroy({ where: { CVId: id } });
-        Certification.destroy({ where: { CVId: id } });
-
-        const del = await CV.destroy({
-            where: {
+            const {
                 id
-            }
-        })
+            } = req.body;
 
-        if (del) return res.status(200).json({
-            status: true,
-            deleteRow: del
-        })
+            Education.destroy({ where: { CVId: id }, transaction: t });
+            Skill.destroy({ where: { CVId: id }, transaction: t });
+            Experience.destroy({ where: { CVId: id }, transaction: t });
+            Certification.destroy({ where: { CVId: id }, transaction: t });
 
-        res.status(404).json({
-            status: false,
-            message: 'Not Found'
+            const del = await CV.destroy({
+                where: {
+                    id
+                },
+                transaction: t
+            })
+
+            if (del) return res.status(200).json({
+                status: true,
+                deleteRow: del
+            })
+
+            res.status(404).json({
+                status: false,
+                message: 'Not Found'
+            })
         })
     } catch (err) {
         res.status(500).json({
             status: false,
-            message: 'Có lỗi, vui lòng thử lại sau'
+            message: 'Bạn không thể xóa CV đã ứng tuyển'
         })
     }
 }
@@ -182,10 +185,10 @@ const updatePictureCV = async (req, res) => {
         sampleFile.mv(uploadPath, (err) => {
             if (err) return res.status(409).json({ message: err });
         })
-        
+
         await CV.update({
             picturePath
-        },{
+        }, {
             where: {
                 id
             }
@@ -196,7 +199,7 @@ const updatePictureCV = async (req, res) => {
             message: `Thành Công id: ${id}`
         })
 
-    }catch(err) {
+    } catch (err) {
         res.status(500).json({
             status: false,
             message: 'Có lỗi, vui lòng thử lại sau'
@@ -239,7 +242,7 @@ const updateCV = async (req, res) => {
                 }
             })).map(skill => skill.id);
 
-            for(let skillId of skillIds) {
+            for (let skillId of skillIds) {
                 // Xóa những row không trùng với id trả về
                 if (!data.Skills.some(skill => skill.id === skillId)) {
                     await Skill.destroy({
@@ -254,7 +257,7 @@ const updateCV = async (req, res) => {
                 if (data.Skills.some(skill => skill.id === skillId)) {
                     await Skill.update({
                         name: data.Skills.find(skill => skill.id === skillId).name,
-                    },{
+                    }, {
                         transaction: t,
                         where: {
                             id: skillId
@@ -269,7 +272,7 @@ const updateCV = async (req, res) => {
                     await Skill.create({
                         name: skill.name,
                         CVId: data.id
-                    },{
+                    }, {
                         transaction: t
                     })
                 }
@@ -304,7 +307,7 @@ const updateCV = async (req, res) => {
                         description: educate.description,
                         startAt: educate.startAt,
                         endAt: educate.endAt
-                    },{
+                    }, {
                         transaction: t,
                         where: {
                             id: eduId
@@ -322,7 +325,7 @@ const updateCV = async (req, res) => {
                         startAt: edu.startAt,
                         endAt: edu.endAt,
                         CVId: data.id
-                    },{
+                    }, {
                         transaction: t
                     })
                 }
@@ -358,7 +361,7 @@ const updateCV = async (req, res) => {
                         description: experience.description,
                         startAt: experience.startAt,
                         endAt: experience.endAt
-                    },{
+                    }, {
                         transaction: t,
                         where: {
                             id: expId
@@ -376,7 +379,7 @@ const updateCV = async (req, res) => {
                         startAt: exp.startAt,
                         endAt: exp.endAt,
                         CVId: data.id
-                    },{
+                    }, {
                         transaction: t
                     })
                 }
@@ -410,7 +413,7 @@ const updateCV = async (req, res) => {
                     await Certification.update({
                         name: certification.name,
                         description: certification.description
-                    },{
+                    }, {
                         transaction: t,
                         where: {
                             id: cerId
@@ -426,7 +429,7 @@ const updateCV = async (req, res) => {
                         name: cer.name,
                         description: cer.description,
                         CVId: data.id
-                    },{
+                    }, {
                         transaction: t
                     })
                 }

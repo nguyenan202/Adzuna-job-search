@@ -17,6 +17,9 @@ const CvApply = sequelize.define('CvApply', {
             key: 'id'
         }
     },
+    picturePath: {
+        type: DataTypes.STRING
+    },
     description: {
         type: DataTypes.TEXT
     },

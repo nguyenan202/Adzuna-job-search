@@ -9,6 +9,7 @@
         width: 1024px;
         max-width: 1024px;
         padding: 1rem;
+        border-radius: 6px;
         justify-content: center;
         height: fit-content;
 
@@ -36,6 +37,10 @@
                     .item_resume_setting_icon_delete {
                         display: block;
                     }
+
+                    .item_resume_setting_icon_view {
+                        display: block;
+                    }
                 }
 
                 .item_resume_setting_title {
@@ -54,6 +59,26 @@
                     font-size: 1rem;
                     color: #fff;
                     height: fit-content;
+                }
+
+                .item_resume_setting_icon_view {
+                    position: absolute;
+                    left: 0.5rem;
+                    top: 0.5rem;
+                    display: none;
+                    background-color: rgba(0, 0, 0, 0.2);
+                    padding: 0.5rem;
+                    border-radius: 50%;
+
+                    &:hover {
+                        cursor: pointer;
+                        background-color: rgba(0, 0, 0, 0.5);
+                    }
+
+                    .item_resume_setting_icon_view_child {
+                        color: #fff;
+                        font-size: 1.25rem;
+                    }
                 }
 
                 .item_resume_setting_icon_use {

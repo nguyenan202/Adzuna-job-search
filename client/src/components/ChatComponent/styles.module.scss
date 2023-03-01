@@ -1,0 +1,121 @@
+.container {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    background-color: #ccc;
+    margin: 0 1rem;
+    border-top-right-radius: 6px;
+    border-top-left-radius: 6px;
+    box-shadow: 0 0px 10px -2px #000;
+
+    .container_loading {
+        position: absolute;
+        top: 3rem;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        background-color: rgba(0,0,0,0.1);
+    }
+
+    .header {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: fit-content;
+        padding: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #b6b2b2;
+        z-index: 1;
+        background-color: #fff;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+
+        .header_name {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+            height: fit-content;
+            width: fit-content;
+        }
+
+        .header_close {
+            font-size: 1.5rem;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.6;
+            }
+        }
+    }
+
+    .body {
+        display: block;
+        width: 100%;
+        height: 100%;
+        
+        .body_messages {
+            display: block;
+            height: calc(88% - 4rem);
+            margin-top: 4rem;
+            flex-direction: column-reverse;
+            padding: 0.25rem 0.5rem;
+            overflow-y: scroll;
+
+            .body_message {
+                width: 100%;
+                height: fit-content;
+
+                .body_message_item {
+                    width: fit-content;
+                    background-color: #ccc;
+                    padding: 0.5rem;
+                    margin: 0.2rem 0;
+                    border-radius: 10px;
+                }
+
+                .body_message_item_my {
+                    width: fit-content;
+                    background-color: #1677f6;
+                    color: #fff;
+                    padding: 0.5rem;
+                    margin: 0.2rem 0;
+                    border-radius: 10px;
+                }
+            }
+        }
+
+        .body_input {
+            height: 12%;
+            max-height: 12%;
+            min-height: 12%;
+            padding: 0.5rem;
+
+        }
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .container {
+        margin: 0;
+
+        .body {
+
+            .body_messages {
+                height: 85%;
+            }
+
+            .body_input {
+                height: 15%;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    .container {
+        max-width: 80vw;
+    }
+}

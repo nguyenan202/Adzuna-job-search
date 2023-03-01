@@ -2,8 +2,9 @@ import { Col, Row, theme } from "antd"
 import styles from './styles.module.scss'
 import { LogoutOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
-import { setLogout } from "../../redux/store";
+import { clearBoxChat, setLogout } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../../App";
 
 const Menu = ({ setCurrentStay, setIsOption, user }) => {
 
@@ -25,7 +26,9 @@ const Menu = ({ setCurrentStay, setIsOption, user }) => {
 
     const handleLogout = async () => {
 
+        socket.emit('user-offline', user.id);
         dispatch(setLogout());
+        dispatch(clearBoxChat());
         
         if (user.externalId) {
             window.open(

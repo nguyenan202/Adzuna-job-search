@@ -1,0 +1,81 @@
+.container {
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+
+  .btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    border: 1px solid #ccc;
+    padding: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    z-index: 1;
+    flex-direction: column;
+
+    .list {
+      display: block;
+      max-height: 70vh;
+      overflow-y: scroll;
+      flex-direction: column;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 6px;
+      }
+
+      /* Handle on hover */
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      .list_avatar {
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.8;
+        }
+      }
+    }
+
+    .icon {
+      font-size: 3rem;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  .container_chat {
+    position: fixed;
+    bottom: 0;
+    right: 5rem;
+    width: fit-content;
+    height: fit-content;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .container {
+    .btn {
+      right: 0;
+      bottom: 5rem;
+    }
+
+    .container_chat {
+      right: 1rem;
+    }
+  }
+}

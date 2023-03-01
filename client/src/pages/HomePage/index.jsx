@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Col, Row } from "antd";
+import { useSelector } from "react-redux";
+import { Row } from "antd";
 import SearchHeader from "../../components/SearchHeader";
-import TopCompanies from "./TopCompanies";
 import Jobs from "./Jobs";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -38,7 +37,6 @@ const HomePage = () => {
         data: {}
     })
 
-    const user = useSelector(state => state.user);
     const token = useSelector(state => state.token);
     
     useEffect(() => {
@@ -60,7 +58,8 @@ const HomePage = () => {
         }catch(err) {
             setPosts([]);
         }
-    },[])
+
+    },[token])
 
     useEffect(() => {
         try {

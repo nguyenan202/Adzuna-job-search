@@ -2,13 +2,13 @@ import { Button, Col, Modal, Row, Spin, Table, Typography, notification, theme }
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux";
-import { socket } from "../../../App";
 
 import styles from './styles.module.scss';
 import ModalInfoUser from "../../../components/ModalInfoUser";
 import MyFieldInput from "../../../components/MyFieldInput";
 import TextArea from "antd/es/input/TextArea";
 import useMediaQuery from "../../../hooks/useMediaQuery";
+import { socket } from '../../../App';
 
 
 const loading = (

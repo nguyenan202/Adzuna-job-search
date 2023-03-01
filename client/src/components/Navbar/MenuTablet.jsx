@@ -2,7 +2,8 @@ import { LogoutOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons
 import { Row } from "antd"
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom"
-import { setLogout } from "../../redux/store";
+import { clearBoxChat, setLogout } from "../../redux/store";
+import { socket } from "../../App";
 
 const MenuTablet = ({ user, currentStay, themeToken, setCurrentStay, setIsMobileOptionOpen }) => {
 
@@ -10,7 +11,10 @@ const MenuTablet = ({ user, currentStay, themeToken, setCurrentStay, setIsMobile
     const navigate = useNavigate();
 
     const handleLogout = () => {
+        
+        socket.emit('user-offline', user.id);
         dispatch(setLogout());
+        dispatch(clearBoxChat());
         
         if (user.externalId) {
             window.open(

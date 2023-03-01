@@ -1,16 +1,12 @@
-import { Button, Modal, Row, Table, Tag, Typography, theme } from "antd";
+import { Button, Row, Table, Tag, Typography, theme } from "antd";
 
 import styles from './styles.module.scss';
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import SpinLoading from "../../components/SpinLoading";
-import MyFieldInput from "../../components/MyFieldInput";
-import { genders } from "../UpPostPage/UpPost";
-import TextAreaField from "../../components/TextAreaField";
-import { socket } from "../../App";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { socket } from '../../App';
 import ModalDetail from "./ModalDetail";
 
 export const shortText = (text, maxLength) => {
@@ -39,7 +35,6 @@ const ManagePostPage = ({ user }) => {
 
     const themeToken = theme.useToken().token;
     const token = useSelector(state => state.token);
-    const navigate = useNavigate();
 
     
     useEffect(() => {

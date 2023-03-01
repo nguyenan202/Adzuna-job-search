@@ -2,11 +2,10 @@ import { Button, Col, Input, Modal, Row, Select, Spin, Typography, notification,
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { socket } from '../../../../App';
 
 import styles from './styles.module.scss';
 import useMediaQuery from "../../../../hooks/useMediaQuery";
-
+import { socket } from '../../../../App';
 
 
 const JobsPost = () => {
