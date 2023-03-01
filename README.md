@@ -21,20 +21,14 @@ Job Search webapp
 # Post
     - Up post ✔️
     - Manage Post ✔️
-    - Post Resume Approval
+    - Post Resume Approval ✔️
     - Post Approval ✔️
     - Filter, Search Post ✔️
-    - Apply Post
+    - Apply Post ✔️
 # Resume
-<<<<<<< HEAD
-    - [x] Create Resume
-    - [x] Export to PDF
-    - [x] Save Resume
-=======
-    - Create Resume
-    - Export to PDF
-    - Save Resume
->>>>>>> cca7c742018e7fe201bdc6757cd1796584262e97
+    - Create Resume ✔️
+    - Export to PDF ✔️
+    - Save Resume ✔️
 # Admin
     - Dashboard
 # Setting
