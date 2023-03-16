@@ -38,4 +38,4 @@ Job Search webapp
     - Add permission to Role ✔️
     - Up Post Setting ✔️
 # Chat
-    - Chat room
+    - Chat room ✔️
