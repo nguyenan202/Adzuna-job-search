@@ -87,7 +87,10 @@ const DetailCompany = ({ company }) => {
                     className={styles.description_company}
                 >
                     {
+                        company.description ?
                         company.description.split('\n').map((line, i) => <Typography.Paragraph key={i}>{line}</Typography.Paragraph>)
+                        :
+                        'đang cập nhật'
                     }
                 </Row>
             </Col>

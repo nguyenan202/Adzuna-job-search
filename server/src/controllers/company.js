@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url'
 import path from 'path';
 import Priority from "../models/priority";
 import { Op } from "sequelize";
+import Role from "../models/role";
 
 //  function
 const getCompanyById = async (companyId) => {
@@ -111,7 +112,19 @@ const getCompaniesByName = async (req, res) => {
 
 const getAllTopCompany = async (req, res) => {
     try {
-        const companies = await Company.findAll();
+        User.belongsTo(Role, { foreignKey: 'roleId' });
+        Company.belongsTo(Priority, { foreignKey: 'priorityId'});
+        Company.belongsTo(User, { foreignKey: 'userId' });
+        const companies = await Company.findAll({
+            include: [{
+                model: User,
+                include: [{
+                    model: Role
+                }]
+            },{
+                model: Priority
+            }]
+        });
 
         if (companies) return res.status(200).json({
             status: true,

@@ -10,6 +10,40 @@ import UserPermission from "../models/userPermission";
 import SettingPermission from '../models/settingPermission';
 import UserSettingPermission from '../models/userSettingPermission';
 
+const getAllUser = async (req, res) => {
+    try {
+
+        User.hasMany(UserPermission, { foreignKey: 'userId' });
+        User.belongsTo(Role, { foreignKey: 'roleId' });
+        Role.hasMany(UserSettingPermission, { foreignKey: 'roleId' });
+        UserSettingPermission.belongsTo(SettingPermission, { foreignKey: 'settingPermissionId' });
+        UserPermission.belongsTo(User, { foreignKey: 'userId' });
+        Permission.hasMany(UserPermission, { foreignKey: 'permissionId' });
+        UserPermission.belongsTo(Permission, { foreignKey: 'permissionId' });
+
+
+        const user = await User.findAll({
+            include: [{
+                model: UserPermission,
+                include: [{
+                    model: Permission
+                }]
+            }, {
+                model: Role,
+                include: [{
+                    model: UserSettingPermission,
+                    include: {
+                        model: SettingPermission
+                    }
+                }]
+            }]
+        });
+
+        res.status(200).json(user)
+    } catch (err) {
+        res.status(500).json({ message: err })
+    }
+}
 
 const getUserById = async (req, res) => {
     try {
@@ -361,12 +395,67 @@ const updatePassword = async (req, res) => {
     }
 }
 
+const getUserByEmail = async (req, res) => {
+    try {
+        const {
+            email
+        } = req.params
+
+        const user = await User.findOne({
+            where: {
+                email
+            }
+        })
+
+        if (user) return res.status(200).json(user)
+
+        res.status(404).json({
+            message: 'Email không tồn tại trên hệ thống'
+        })
+    }catch(err) {
+        res.status(500).json({message: err})
+    }
+}
+
+const updatePasswordByEmail = async (req, res) => {
+    try {
+        const {
+            email,
+            password
+        } = req.body;
+
+        const salt = await bcrypt.genSalt();
+        const passwordBcrypt = await bcrypt.hash(password, salt);
+
+        const updatedRow = await User.update({
+            password: passwordBcrypt
+        },{
+            where: {
+                email
+            }
+        })
+
+        if (updatedRow[0] !== 0) return res.status(200).json({
+            message: 'Mật khẩu mới đã được cập nhật'
+        })
+
+        res.status(400).json({
+            message: 'Có lỗi, vui lòng thử lại sau'
+        })
+    }catch(err) {
+        res.status(500).json({message: err})
+    }
+}
+
 export {
+    getAllUser,
     getUserById,
     getUserByName,
     updateInfomation,
     updateImage,
     deleteImage,
     getPasswordByUserId,
-    updatePassword
+    updatePassword,
+    getUserByEmail,
+    updatePasswordByEmail
 }

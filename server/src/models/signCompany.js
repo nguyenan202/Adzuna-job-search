@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize";
+import { DATE, DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
 import User from "./user";
 
@@ -16,6 +16,14 @@ const SignCompany = sequelize.define('SignCompany', {
     },
     url: {
         type: DataTypes.TEXT
+    },
+    taxCode: {
+        type: DataTypes.STRING(500),
+        allowNull: false
+    },
+    businessCode: {
+        type: DataTypes.STRING(500),
+        allowNull: false
     },
     reason: {
         type: DataTypes.TEXT

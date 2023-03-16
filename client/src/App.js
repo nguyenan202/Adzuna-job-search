@@ -28,6 +28,7 @@ import ListCompanyPage from './pages/ListCompanyPage';
 import ManageCV from './pages/ManageCV';
 import CV from './pages/CvPage';
 import Chat from './components/Chat';
+import ManageAdmin from './pages/ManageAdmin';
 
 export const socket = io.connect(process.env.REACT_APP_API_URL);
 
@@ -92,7 +93,6 @@ function App() {
     }
 
     // Listen event update role
-
     user && socket.on(`updated-roleId-${user.Role.id}`, fetchingUser);
     user && socket.on(`updated-permission-${user.id}`, fetchingUser);
     user && socket.on(`updated-role-userId-${user.id}`, fetchingUser);
@@ -131,6 +131,7 @@ function App() {
           <Route path='/manage-cv' element={user ? <ManageCV /> : <Navigate to='/login' />} />
           <Route path='/cv/:id' element={user ? <CV /> : <Navigate to='/login' />} />
           <Route path='/cv/:id/view-only/:viewOnly' element={user ? <CV /> : <Navigate to='/login' />} />
+          <Route path='/manage' element={user ? <ManageAdmin user={user}/> : <Navigate to='/login'/>}/>
         </Routes>
 
         {user &&

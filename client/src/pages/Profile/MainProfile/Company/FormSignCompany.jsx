@@ -28,6 +28,16 @@ const initState = {
         error: false,
         message: null,
         input: '',
+    },
+    taxCode: {
+        error: false,
+        message: null,
+        input: '',
+    },
+    businessCode: {
+        error: false,
+        message: null,
+        input: '',
     }
 }
 
@@ -75,6 +85,30 @@ const reducer = (state, action) => {
                 url: {
                     error: error_url,
                     message: message_url,
+                    input: action.payload
+                }
+            }
+        case 'changeTaxCode':
+            const error_tax = action.payload.length < 10;
+            const message_tax = error_tax && 'Mã số thuế có ít nhất 10 ký tự';
+
+            return {
+                ...state,
+                taxCode: {
+                    error: error_tax,
+                    message: message_tax,
+                    input: action.payload
+                }
+            }
+        case 'changeBussinessCode':
+            const error_bc = action.payload.length < 10;
+            const message_bc = error_bc && 'Mã số doanh nghiệp có ít nhất 10 ký tự';
+
+            return {
+                ...state,
+                businessCode: {
+                    error: error_bc,
+                    message: message_bc,
                     input: action.payload
                 }
             }
@@ -126,8 +160,6 @@ const FormSignCompany = ({ keyRerender, setKeyRerender }) => {
             Object.entries(state).map(([key, value]) => ([key, value.input]))
         );
 
-
-
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/company`, {
             userId: user.id,
             ...data
@@ -141,10 +173,10 @@ const FormSignCompany = ({ keyRerender, setKeyRerender }) => {
             openNotificationWithIcon('success')
             dispatch({ type: 'clearData' })
         } else openNotificationWithIcon('error')
-        
+
         setIsOpenModal(false);
         setIsLoadingConfirm(false);
-        setKeyRerender(keyRerender+1);
+        setKeyRerender(keyRerender + 1);
     }
 
 
@@ -172,6 +204,20 @@ const FormSignCompany = ({ keyRerender, setKeyRerender }) => {
     const handleChangeUrl = (e) => {
         dispatch({
             type: 'changeUrl',
+            payload: e.target.value
+        })
+    }
+
+    const handleChangeTaxCode = (e) => {
+        dispatch({
+            type: 'changeTaxCode',
+            payload: e.target.value
+        })
+    }
+
+    const handleChangeBussinessCode = (e) => {
+        dispatch({
+            type: 'changeBussinessCode',
             payload: e.target.value
         })
     }
@@ -238,6 +284,28 @@ const FormSignCompany = ({ keyRerender, setKeyRerender }) => {
                         {state.reason.message}
                     </Typography.Text>}
                 </Col>
+
+                <MyFieldInput
+                    placeholder='Nhập mã số thuế'
+                    field='Mã số thuế'
+                    span={24}
+                    size='large'
+                    value={state.taxCode.input}
+                    onChange={handleChangeTaxCode}
+                    status={state.taxCode.error && 'error'}
+                    isInvalidMessage={state.taxCode.error && state.taxCode.message}
+                />
+
+                <MyFieldInput
+                    placeholder='Nhập mã số doanh nghiệp'
+                    field='Mã số doanh nghiệp'
+                    span={24}
+                    size='large'
+                    value={state.businessCode.input}
+                    onChange={handleChangeBussinessCode}
+                    status={state.businessCode.error && 'error'}
+                    isInvalidMessage={state.businessCode.error && state.businessCode.message}
+                />
 
                 <MyFieldInput
                     placeholder='https://adzuna.com'

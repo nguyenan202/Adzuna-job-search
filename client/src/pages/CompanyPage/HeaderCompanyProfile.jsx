@@ -127,7 +127,7 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
                     >
                         <Typography.Paragraph style={{ margin: 0, display: 'flex', alignItems: 'center', fontSize: '1rem', opacity: '0.8' }}>
                             <BiWorld style={{ marginRight: '0.5rem' }} />
-                            <a href={company.url} target="_blank" rel="noreferrer">{company.url}</a>
+                            <a href={company.url} target="_blank" rel="noreferrer">{company.url || 'đang cập nhật'}</a>
                         </Typography.Paragraph>
                     </Col>
                     <Col
@@ -135,7 +135,7 @@ const HeaderCompanyProfile = ({ company, keyReRender, setKeyReRender }) => {
                     >
                         <Typography.Paragraph style={{ margin: 0, display: 'flex', alignItems: 'center', fontSize: '1rem', opacity: '0.8' }}>
                             <FaHospitalUser style={{ marginRight: '0.5rem' }} />
-                            {`${company.size} nhân viên`}
+                            {company.size ? `${company.size} nhân viên` : 'đang cập nhật'}
                         </Typography.Paragraph>
                     </Col>
                 </Row>

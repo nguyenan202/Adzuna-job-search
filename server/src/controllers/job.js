@@ -2,11 +2,17 @@
 import Job from '../models/job';
 
 import { io } from '../index';
+import Specialization from '../models/specialization';
 
 const getAllJob = async (req, res) => {
 
     try {
-        const jobs = await Job.findAll();
+        Job.hasMany(Specialization, { foreignKey: 'jobId' });
+        const jobs = await Job.findAll({
+            include: [{
+                model: Specialization
+            }]
+        });
 
         res.status(200).json(jobs);
     }catch(err) {

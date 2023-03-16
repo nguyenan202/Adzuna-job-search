@@ -13,11 +13,13 @@ import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
 import { useState } from 'react'
 import SpinLoading from '../../components/SpinLoading'
+import ForGotPassword from './ForgotPassword'
 
 const Login = () => {
 
     const [isLogin, setIsLogin] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [showForgotPassowrd, setShowForgotPassword] = useState(false);
 
     const googleAuth = () => {
         window.open(
@@ -99,12 +101,21 @@ const Login = () => {
                                     textAlign: 'right'
                                 }}
                             >
-                                <a href='/login'>Quên mật khẩu</a>
+                                <a
+                                    href='#'
+                                    onClick={() => setShowForgotPassword(true)}
+                                >Quên mật khẩu</a>
                             </Typography>
                         </Col>
                     </Row>
                 </Row>
             </Col>
+            
+            {/* Modal forgot password */}
+            <ForGotPassword
+                show={showForgotPassowrd}
+                setShow={setShowForgotPassword}
+            />
         </Row>
     )
 }

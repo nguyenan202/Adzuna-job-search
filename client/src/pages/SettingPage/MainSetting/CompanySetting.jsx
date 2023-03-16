@@ -287,6 +287,18 @@ const CompanySetting = () => {
                                 span={24}
                             />
                             <MyFieldInput
+                                field='Mã số thuế'
+                                value={requestChoose.taxCode}
+                                readOnly
+                                span={24}
+                            />
+                            <MyFieldInput
+                                field='Mã số doanh nghiệp'
+                                value={requestChoose.businessCode}
+                                readOnly
+                                span={24}
+                            />
+                            <MyFieldInput
                                 field='Website Công ty'
                                 value={requestChoose.url}
                                 readOnly

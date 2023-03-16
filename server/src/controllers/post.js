@@ -9,6 +9,8 @@ import WorkingTime from '../models/workingTime';
 import PostAddress from '../models/postAddress';
 import Address from '../models/address';
 import Company from '../models/company';
+import { sequelize } from '../config/database';
+import CvApply from '../models/cvApply';
 
 const getAllPostInCurrentMonth = async (req, res) => {
     try {
@@ -36,6 +38,47 @@ const getAllPostInCurrentMonth = async (req, res) => {
 }
 
 const getAllPost = async (req, res) => {
+    try {
+
+        Post.belongsTo(Specialization, { foreignKey: 'specializationId' });
+        Post.belongsTo(Level, { foreignKey: 'levelId' });
+        Post.belongsTo(ExperiencePost, { foreignKey: 'experiencePostId' });
+        Post.belongsTo(WorkingTime, { foreignKey: 'workingTimeId' });
+        PostAddress.belongsTo(Address, { foreignKey: 'addressId' })
+        Post.hasMany(PostAddress, { foreignKey: 'postId' });
+        Post.belongsTo(Company, { foreignKey: 'companyId' });
+        const posts = await Post.findAll({
+            include: [{
+                model: Specialization
+            }, {
+                model: Level
+            }, {
+                model: ExperiencePost
+            }, {
+                model: WorkingTime
+            }, {
+                model: PostAddress,
+                include: [{
+                    model: Address
+                }]
+            }, {
+                model: Company
+            }]
+        });
+
+        res.status(200).json({
+            status: true,
+            posts
+        })
+    } catch (err) {
+        res.status(500).json({
+            status: false,
+            message: err
+        })
+    }
+}
+
+const getAllPostPending = async (req, res) => {
     try {
 
         Post.belongsTo(Specialization, { foreignKey: 'specializationId' });
@@ -379,14 +422,88 @@ const changeDatePost = async (req, res) => {
     }
 }
 
+const updatePost = async (req, res) => {
+    try {
+        const {
+            postId,
+            data
+        } = req.body
+
+        const updatedRow = await Post.update(
+            data,
+            {
+                where: {
+                    id: postId
+                }
+            }
+        )
+
+        if (updatedRow[0] !== 0) return res.status(200).json({
+            message: 'Cập nhật bài đăng thành công'
+        })
+
+        res.status(400).json({
+            message: 'Có lỗi, vui lòng thử lại sau'
+        });
+    }catch(err) {
+        res.status(500).json({ message: err });
+    }
+}
+
+const deletePostById = async (req, res) => {
+    try {
+        const {
+            id
+        } = req.body;
+        
+        const result = await sequelize.transaction(async (t) =>{
+
+            await CvApply.destroy({
+                where: {
+                    postId: id
+                },
+                transaction: t
+            })
+
+            await PostAddress.destroy({
+                where: {
+                    postId: id
+                },
+                transaction: t
+            })
+            
+            const deletedRow = await Post.destroy({
+                where: {
+                    id
+                },
+                transaction: t
+            })
+            console.log('xoa post: ' + deletedRow);
+            return deletedRow;
+        })
+
+        res.status(200).json({
+            deletedRow: result
+        })
+
+    }catch(err) {
+        res.status(500).json({
+            message: 'Có lỗi, vui lòng thử lại sau'
+        })
+    }
+}
+
 export {
     getAllPostInCurrentMonth,
     createPost,
     getAllPostByCompanyId,
     getAllPost,
+    getAllPostPending,
     updateStatusPost,
     getAllPostActive,
     getAllPostActiveWithSearch,
     getPostById,
-    changeDatePost
+    changeDatePost,
+    updatePost,
+    deletePostById
 }

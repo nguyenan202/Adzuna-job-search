@@ -13,6 +13,7 @@ import ItemCVUpload from "./ItemCVUpload";
 
 const ManageCV = () => {
 
+    const [isLoadingAutoFill, setIsLoadingAutoFill] = useState(false);
     const [loadingCreateCV, setLoadingCreateCV] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [loadingUpload, setLoadingUpload] = useState(false);
@@ -23,6 +24,8 @@ const ManageCV = () => {
     const [cvName, setCvName] = useState('');
     const [resumes, setResumes] = useState([]);
     const [resumesUpload, setResumesUpload] = useState([]);
+    const [showModalAutoFill, setShowModalAutoFill] = useState(false);
+    const [pdfFile, setPdfFile] = useState(null);
     const [keyReRender, setKeyReRender] = useState(0);
 
     const themeToken = theme.useToken().token;
@@ -45,7 +48,7 @@ const ManageCV = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 })
-                
+
                 if (response.status === 200 && response.data.status && response_cvUpload.status === 200) {
                     setResumes(response.data.resums)
                     setResumesUpload(response_cvUpload.data.allCvUpload);
@@ -96,7 +99,7 @@ const ManageCV = () => {
             openNotification('error', 'Có lỗi, vui lòng thử lại sau');
         }
     }
-    
+
     const handleUpload = async () => {
         if (!imageCV) openNotification('error', 'Hãy chọn 1 CV trước khi tải lên')
         if (cvNameUpload.value === '') setCvNameUpload({
@@ -121,13 +124,17 @@ const ManageCV = () => {
             if (response.status === 200) {
                 openNotification('success', 'Tải CV lên thành công');
                 setShowModalUpload(false);
-                setKeyReRender(keyReRender+1);
+                setKeyReRender(keyReRender + 1);
             }
 
         } catch (err) {
             openNotification('error', 'Có lỗi, vui lòng thử lại sau');
         }
         setLoadingUpload(false);
+    }
+
+    const handleFillCV = async () => {
+        
     }
 
     const listCV = resumes.map(resume => (
@@ -158,9 +165,21 @@ const ManageCV = () => {
                     backgroundColor: themeToken.componentBackground
                 }}
             >
-                <Typography.Title>
-                    Quản lý CV
-                </Typography.Title>
+                <Row style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography.Title>
+                        Quản lý CV
+                    </Typography.Title>
+                    <Button
+                        size='large'
+                        style={{
+                            backgroundColor: themeToken.mainColor,
+                            color: themeToken.textColor
+                        }}
+                        onClick={() => setShowModalAutoFill(true)}
+                    >
+                        <AiOutlineCloudUpload style={{ marginRight: '0.5rem', fontSize: '1rem' }} /> Tải + Autofill CV
+                    </Button>
+                </Row>
 
                 <Row style={{ width: '100%' }}>
                     {listCV}
@@ -264,6 +283,31 @@ const ManageCV = () => {
                     })}
                     isInvalidMessage={cvNameUpload.error && 'Không được bỏ trống trường này'}
                 />
+            </Modal>
+
+            {/* Modal Upload CV + Autofill */}
+            <Modal
+                title='Autofill CV'
+                open={showModalAutoFill}
+                onCancel={() => setShowModalAutoFill(false)}
+                onOk={handleFillCV}
+                confirmLoading={isLoadingAutoFill}
+            >
+                <label
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        height: '80px',
+                        outline: `1px dashed ${themeToken.mainColor}`,
+                        cursor: 'pointer'
+                    }}
+                    htmlFor="upload-fill-cv"
+                >
+                    {pdfFile ? pdfFile.name : `Chọn CV tải lên (.pdf)`}
+                </label>
+                <input type="file" id='upload-fill-cv' hidden accept=".pdf" onChange={(e) => setPdfFile(e.target.files[0])} />
             </Modal>
         </Row>
     )

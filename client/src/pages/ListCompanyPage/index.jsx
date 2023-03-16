@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import useMediaQuery from "../../hooks/useMediaQuery";
 
 const MyList = styled(List)`
     &&& {
@@ -31,7 +30,7 @@ const ListCompanyPage = () => {
 
     const token = useSelector(state => state.token);
 
-    const breakpointTablet = useMediaQuery('(max-width: 768px)');
+    // const breakpointTablet = useMediaQuery('(max-width: 768px)');
 
     useEffect(() => {
         const fetching_company = async () => {
@@ -75,7 +74,7 @@ const ListCompanyPage = () => {
 
 
     }
-
+    
     return (
         <Row
             className={styles.container}
@@ -105,7 +104,7 @@ const ListCompanyPage = () => {
                 <MyList
                     itemLayout="vertical"
                     size="large"
-                    pagination={{ pageSize: breakpointTablet ? 3 : 6 }}
+                    pagination={{ pageSize: 3 }}
                     loading={isLoading}
                     dataSource={companies}
                     renderItem={company => <CompanyItem key={company.id} company={company} />}

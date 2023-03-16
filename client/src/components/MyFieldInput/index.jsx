@@ -18,6 +18,7 @@ const MyFieldInput = ({ field, fieldSize, value, isInvalidMessage, ...props }) =
             <Input
                 value={value}
                 {...props}
+                spellCheck={false}
                 style={{
                     border: isInvalidMessage && `1px solid red`,
                     borderRadius: '8px'

@@ -6,6 +6,8 @@ import { useState } from "react";
 import * as yup from 'yup';
 import { useFormik } from 'formik'
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const iconStyle = { marginRight: '0.5rem', fontSize: '1.2rem', cursor: 'pointer' }
 
@@ -49,10 +51,12 @@ const initValuesRegister = {
 
 const RegisterForm = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [isShowPassword, setIsShowPassword] = useState(false);
-    const [message, setMessage] = useState(null);
 
     const tokenTheme = theme.useToken().token;
+    const openNotification = useSelector(state => state.notification);
+    const navigate = useNavigate();
 
     const togglePassword = () => {
         setIsShowPassword(!isShowPassword)
@@ -62,18 +66,22 @@ const RegisterForm = () => {
         initialValues: initValuesRegister,
         validationSchema: registerSchema,
         onSubmit: async (values, onSubmitProps) => {
+            setIsLoading(true);
             try {
 
                 const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, values)
 
                 const data = await response.data;
 
-                setMessage(data.message)
+                openNotification('success','Tạo tài khoản thành công, vui lòng đăng nhập');
+                setIsLoading(false);
+                formik.resetForm();
             } catch (err) {
                 const msg = err.response.data.message;
                 if (msg === 'Email already exists.') {
                     onSubmitProps.setFieldError('email', msg)
                 }
+                setIsLoading(false);
             }
         }
     })
@@ -183,16 +191,6 @@ const RegisterForm = () => {
                         {formik.errors.rePassword}
                     </Typography>}
                 </Col>
-                {message && <Col span={24}>
-                    <Typography
-                        style={{
-                            textAlign: 'center',
-                            color: 'green'
-                        }}
-                    >
-                        {message}
-                    </Typography>
-                </Col>}
                 <Col span={24}>
                     <Button
                         type='primary'
@@ -201,6 +199,7 @@ const RegisterForm = () => {
                         style={{
                             backgroundColor: tokenTheme.mainColor
                         }}
+                        disabled={isLoading}
                     >
                         Đăng kí
                     </Button>

@@ -1,0 +1,23 @@
+.container {
+  min-height: calc(100vh - 67px);
+
+  .container_left {
+    background-color: rgb(245, 243, 237);
+    width: 256px;
+
+    .menu {
+      height: 100%;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+  }
+
+  .container_right {
+    width: calc(100% - 256px);
+    min-height: calc(100vh - 67px);
+    max-height: calc(100vh - 67px);
+    overflow-y: scroll;
+    padding: 1rem;
+    background-color: #fff;
+  }
+}

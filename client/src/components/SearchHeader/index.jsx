@@ -109,7 +109,7 @@ const SearchHeader = ({ numberOfPost, cities, search, setSearch, loadingHome }) 
         }catch(err) {
             setSpecializations([])
         }
-    }, [selectedJobId])
+    }, [selectedJobId, token])
     
 
     const handleSearchJobs = () => {

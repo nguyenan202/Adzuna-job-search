@@ -7,8 +7,8 @@ import useMediaQuery from "../../hooks/useMediaQuery"
 const CompanyItem = ({ company }) => {
 
     const breakpointTablet = useMediaQuery('(max-width: 768px)');
-
-    return (
+    
+    return (company &&
         <Col
             span={breakpointTablet ? 24 : 8}
             style={{ padding: '1rem' }}
@@ -45,7 +45,7 @@ const CompanyItem = ({ company }) => {
                         {company.name}
                     </Link>
                     <Typography.Paragraph>
-                        {shortText(company.description, 325)}
+                        {company.description && shortText(company.description, 325)}
                     </Typography.Paragraph>
                 </Row>
             </Row>
