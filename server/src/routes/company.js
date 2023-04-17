@@ -1,8 +1,7 @@
 import express from 'express';
 
 import {
-    verifyToken,
-    verifyTokenAdmin
+    verifyToken
 } from '../middlewares/auth'
 import {
     getCompanyByUserId,
@@ -19,7 +18,8 @@ import {
     getAllAddressByCompanyId,
     getCompanyByCompanyId,
     getAllTopCompany,
-    getCompaniesByName
+    getCompaniesByName,
+    deleteCompanyById
 } from '../controllers/company'
 
 const router = express.Router();
@@ -41,6 +41,7 @@ router.patch('/infomation', verifyToken, updateInfo);
 router.patch('/image', verifyToken, updateImage);
 router.patch('/address', verifyToken, updateAddress)
 
+router.delete('/', verifyToken, deleteCompanyById);
 router.delete('/image', verifyToken, removeImage);
 router.delete('/address', verifyToken, deleteAddress);
 

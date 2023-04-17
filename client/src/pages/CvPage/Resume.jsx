@@ -75,6 +75,7 @@ const Resume = ({ cv, dispatch, viewOnly }) => {
                             type='file'
                             accept=".png, .jpeg, .jpg"
                             onChange={(e) => {
+                                console.log(URL.createObjectURL(e.target.files[0]));
                                 if (e.target.files[0] && e.target.files[0].size > 800000) return openNotification('error', 'Dung lượng ảnh không được vượt quá 800KB');
                                 dispatch({
                                     type: 'set_image',

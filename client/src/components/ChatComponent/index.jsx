@@ -8,6 +8,8 @@ import { removeBoxChat } from '../../redux/store';
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { socket } from '../../App';
+import { shortText } from "../../pages/ManagePostPage";
+import { useNavigate } from "react-router-dom";
 
 const ChatComponent = ({ id, usersOnline }) => {
 
@@ -23,6 +25,7 @@ const ChatComponent = ({ id, usersOnline }) => {
     const dispatch = useDispatch();
 
     const endRef = useRef();
+    const navigate = useNavigate();
 
     const scrollToBottom = () => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -142,8 +145,11 @@ const ChatComponent = ({ id, usersOnline }) => {
                                 src={chat.User.Conpany ? `${process.env.REACT_APP_API_URL}/images/${chat.User.Conpany.picturePath}` : `${process.env.REACT_APP_API_URL}/images/${chat.User.picturePath}`}
                             />
                             <Row style={{ marginLeft: '0.5rem' }}>
-                                <Typography.Paragraph className={styles.header_name}>
-                                    {chat.User.Conpany ? chat.User.Conpany.name : `${chat.User.lastName} ${chat.User.firstName}`}
+                                <Typography.Paragraph
+                                    className={styles.header_name}
+                                    onClick={() => navigate(`/company/${chat.User.Conpany.id}`)}    
+                                >
+                                    {chat.User.Conpany ? shortText(chat.User.Conpany.name, 20) : shortText(`${chat.User.lastName} ${chat.User.firstName}`,20)}
                                 </Typography.Paragraph>
                                 <Row style={{ width: '100%', alignItems: 'flex-end' }}>
                                     <div

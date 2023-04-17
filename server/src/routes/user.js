@@ -10,7 +10,8 @@ import {
     updatePassword,
     getUserByEmail,
     updatePasswordByEmail,
-    getAllUser
+    getAllUser,
+    updateStatus
 } from '../controllers/user';
 import { verifyToken } from '../middlewares/auth';
 
@@ -27,6 +28,7 @@ router.patch('/email/password', updatePasswordByEmail);
 
 router.patch('/', verifyToken, updateInfomation);
 router.patch('/image', verifyToken, updateImage);
+router.patch('/status', verifyToken, updateStatus);
 
 router.delete('/image', verifyToken, deleteImage);
 

@@ -478,7 +478,7 @@ const deletePostById = async (req, res) => {
                 },
                 transaction: t
             })
-            console.log('xoa post: ' + deletedRow);
+            
             return deletedRow;
         })
 

@@ -9,6 +9,7 @@ import PermissionsSetting from "./MainSetting/PermissionsSetting"
 import CompanySetting from "./MainSetting/CompanySetting"
 import RoleSetting from "./MainSetting/RoleSetting"
 import PostSetting from "./MainSetting/PostSetting"
+import MessagePage from "../../components/MessagePage"
 
 const Setting = () => {
 
@@ -61,9 +62,10 @@ const Setting = () => {
                     layout={breakPointTablet ? 16 : 24}
                 />
             </Row> :
-            <Row>
-                Access Denide
-            </Row>)
+            <MessagePage
+                title={'403 Access Denied'}
+            />
+            )
     )
 }
 

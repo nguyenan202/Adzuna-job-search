@@ -26,6 +26,8 @@ import cvUploadRouter from './routes/cvUpload';
 import roomChatRouter from './routes/roomChat';
 import messageRouter from './routes/message';
 import pdfRouter from './routes/pdf';
+import piorityRouter from './routes/piority';
+import trafficRouter from './routes/traffic';
 import { usersOnline } from './data';
 
 const app = express();
@@ -63,6 +65,8 @@ app.use('/cv-upload', cvUploadRouter);
 app.use('/room-chat', roomChatRouter);
 app.use('/message', messageRouter);
 app.use('/pdf', pdfRouter);
+app.use('/piority', piorityRouter);
+app.use('/traffic', trafficRouter);
 
 //io connect
 io.on('connection', (socket) => {

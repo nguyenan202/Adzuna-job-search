@@ -16,6 +16,7 @@ const UserManagment = () => {
     const [dataSave, setDataSave] = useState([]);
     const [search, setSearch] = useState('');
     const [userSelected, setUserSelected] = useState(null);
+    const [keyReRender, setKeyReRender] = useState(0);
 
     const token = useSelector(state => state.token);
     const user = useSelector(state => state.user);
@@ -43,7 +44,7 @@ const UserManagment = () => {
         fetchUser().then(() => {
             setIsLoading(false);
         })
-    }, [token, user.id])
+    }, [token, user.id, keyReRender])
 
     useEffect(() => {
         if (search === '') setUsers([...dataSave]);
@@ -94,9 +95,9 @@ const UserManagment = () => {
                 return (
                     <Row>
                         <DeleteButton
-                            userId={user.id}
-                            users={users}
-                            setUsers={setUsers}
+                            user={user}
+                            keyReRender={keyReRender}
+                            setKeyReRender={setKeyReRender}
                         />
                         <Button
                             style={{ marginLeft: '0.15rem', border: `${themeToken.mainColor} 1px solid` }}

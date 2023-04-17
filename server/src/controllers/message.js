@@ -1,5 +1,7 @@
 import Message from '../models/message';
 import { io } from '../index';
+import RoomChat from '../models/roomChat';
+import { sequelize } from '../config/database';
 
 const getAllMessage = async (req, res) => {
     try {
@@ -33,19 +35,43 @@ const addMessage = async (req, res) => {
             roomChatId
         } = req.body
 
-        const createdMessage = await Message.create({
-            text,
-            userId,
-            roomChatId
-        })
+        const result = await sequelize.transaction(async (t) => {
+            const createdMessage = await Message.create({
+                text,
+                userId,
+                roomChatId
+            },{
+                transaction: t
+            });
 
-        if (createdMessage) {
-            io.emit(`update-chatRoom-${roomChatId}`, createdMessage);
-            return res.status(200).json(createdMessage);
-        }
-        res.status(400).json({
-            message: 'Có lỗi'
-        })
+            const roomChat = await RoomChat.findOne({
+                where: {
+                    id: roomChatId
+                },
+                transaction: t
+            });
+
+            const userReciveMessage = roomChat.userId_1 === userId ? roomChat.userId_2 : roomChat.userId_1;
+
+            if (createdMessage && userReciveMessage) {
+                io.emit(`update-chatRoom-${roomChatId}`, createdMessage);
+                io.emit(`update-boxchat-${userReciveMessage}`);
+                return {
+                    status: 200,
+                    data: createdMessage
+                }
+            }
+
+            return {
+                status: 400,
+                data: {
+                    message: 'Có lỗi, vui lòng thử lại sau'
+                }
+            }
+        });
+
+
+        res.status(result.status).json(result.data);
     }catch(err) {
         res.status(500).json({
             message: 'Có lỗi, vui lòng thử lại sau'

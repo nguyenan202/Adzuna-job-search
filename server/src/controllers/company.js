@@ -10,6 +10,10 @@ import path from 'path';
 import Priority from "../models/priority";
 import { Op } from "sequelize";
 import Role from "../models/role";
+import CvApply from "../models/cvApply";
+import PostAddress from "../models/postAddress";
+import Post from "../models/post";
+import { sequelize } from "../config/database";
 
 //  function
 const getCompanyById = async (companyId) => {
@@ -607,6 +611,101 @@ const getAllAddressByCompanyId = async (req, res) => {
     }
 }
 
+const deleteCompanyById = async (req, res) => {
+    try {
+        const {
+            id
+        } = req.body;
+
+        const result = await sequelize.transaction(async (t) =>{
+
+            // find all post who posted by Company Id
+            const posts = await Post.findAll({
+                where: {
+                    companyId: id
+                },
+                transaction: t
+            })
+
+            // delete all post who posted by company Id
+            for (const post of posts) {
+                await CvApply.destroy({
+                    where: {
+                        postId: post.id
+                    },
+                    transaction: t
+                })
+    
+                await PostAddress.destroy({
+                    where: {
+                        postId: post.id
+                    },
+                    transaction: t
+                })
+                
+                await Post.destroy({
+                    where: {
+                        id: post.id
+                    },
+                    transaction: t
+                })
+            }
+
+            // delete all address of company
+            await Address.destroy({
+                where: {
+                    companyId: id
+                },
+                transaction: t
+            })
+
+            // delete all rate of company
+            await Rate.destroy({
+                where: {
+                    companyId: id
+                },
+                transaction: t
+            })
+
+            const deletedRow = await Company.destroy({
+                where: {
+                    id
+                },
+                transaction: t
+            })
+
+            return deletedRow[0]
+            // await CvApply.destroy({
+            //     where: {
+            //         postId: id
+            //     },
+            //     transaction: t
+            // })
+
+            // await PostAddress.destroy({
+            //     where: {
+            //         postId: id
+            //     },
+            //     transaction: t
+            // })
+            
+            // await Post.destroy({
+            //     where: {
+            //         id
+            //     },
+            //     transaction: t
+            // })
+            
+            // return deletedRow;
+        })
+
+        res.status(200).json(result);
+
+    }catch(err) {
+        res.status(500).json({ message: err });
+    }
+}
+
 export {
     getCompanyByUserId,
     getHistorySignByUserId,
@@ -622,5 +721,6 @@ export {
     getAllAddressByCompanyId,
     getCompanyByCompanyId,
     getAllTopCompany,
-    getCompaniesByName
+    getCompaniesByName,
+    deleteCompanyById
 }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import Login from './pages/Login';
 import Home from './pages/HomePage';
-import { setLogin, setNotification, setUser } from './redux/store'
+import { setLogin, setNotification, setUser, setLogout } from './redux/store'
 import { io } from 'socket.io-client';
 
 
@@ -78,6 +78,12 @@ function App() {
   }, [dispatch])
 
   useEffect(() => {
+    user && axios.post(`${process.env.REACT_APP_API_URL}/traffic`, {
+      userId: user.id
+    }, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+
     const fetchingUser = async () => {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/${user.id}`, {
         headers: {
@@ -92,10 +98,16 @@ function App() {
       openNotificationWithIcon('info', 'Quyền của bạn đã được thay đổi bởi Admin');
     }
 
+    const handleLogout = () => {
+      dispatch(setLogout());
+      openNotificationWithIcon('warning', 'Vui lòng đăng nhập lại');
+    }
+
     // Listen event update role
     user && socket.on(`updated-roleId-${user.Role.id}`, fetchingUser);
     user && socket.on(`updated-permission-${user.id}`, fetchingUser);
     user && socket.on(`updated-role-userId-${user.id}`, fetchingUser);
+    user && socket.on(`logout-user-${user.id}`, handleLogout);
     if (user) {
       socket.auth = { userId: user.id };
       socket.connect();
@@ -105,6 +117,7 @@ function App() {
       socket.off(`updated-roleId-${user.Role.id}`);
       socket.off(`updated-permission-${user.id}`);
       socket.off(`updated-role-userId-${user.id}`);
+      socket.off(`logout-user-${user.id}`, handleLogout);
     }
   }, [user, token, dispatch, navigate, openNotificationWithIcon])
 
@@ -131,11 +144,11 @@ function App() {
           <Route path='/manage-cv' element={user ? <ManageCV /> : <Navigate to='/login' />} />
           <Route path='/cv/:id' element={user ? <CV /> : <Navigate to='/login' />} />
           <Route path='/cv/:id/view-only/:viewOnly' element={user ? <CV /> : <Navigate to='/login' />} />
-          <Route path='/manage' element={user ? <ManageAdmin user={user}/> : <Navigate to='/login'/>}/>
+          <Route path='/manage' element={user ? <ManageAdmin user={user} /> : <Navigate to='/login' />} />
         </Routes>
 
         {user &&
-          <Chat/>
+          <Chat />
         }
       </>}
     </div>

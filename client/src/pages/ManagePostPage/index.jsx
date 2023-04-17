@@ -35,7 +35,6 @@ const ManagePostPage = ({ user }) => {
 
     const themeToken = theme.useToken().token;
     const token = useSelector(state => state.token);
-
     
     useEffect(() => {
         const fetching = async () => {

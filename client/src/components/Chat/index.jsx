@@ -14,13 +14,14 @@ const Chat = () => {
     const [showChats, setShowChats] = useState(false);
     const [chats, setChats] = useState([]);
     const [usersOnline, setUsersOnline] = useState([]);
+    const [numberMessage, setNumberMessage] = useState(0);
 
     const themeToken = theme.useToken().token;
     const token = useSelector(state => state.token);
     const user = useSelector(state => state.user);
     const boxChat = useSelector(state => state.chats);
     const dispatch = useDispatch();
-
+    
     useEffect(() => {
         const fetching = async () => {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/room-chat/user/${user.id}`, {
@@ -33,15 +34,20 @@ const Chat = () => {
         }
 
         const setData = (data) => setUsersOnline(data)
+        const updateData = () => setNumberMessage(numberMessage+1);
 
         fetching();
 
         socket.on('update-online', setData);
+        socket.on(`update-boxchat-${user.id}`, updateData);
 
         socket.emit(`first-mounted-${user.id}`)
 
-        return () => socket.off('update-online', setData);
-    }, [token, user.id])
+        return () => {
+            socket.off('update-online', setData);
+            socket.off(`update-boxchat-${user.id}`,updateData);
+        }
+    }, [token, user.id, numberMessage])
 
     const listChat = chats.map(chat => {
         const image = chat.User.Conpany ? chat.User.Conpany.picturePath : chat.User.picturePath
@@ -59,7 +65,7 @@ const Chat = () => {
             </Row>
         )
     })
-    
+
     return (
         <Row className={styles.container}>
             <Row
@@ -73,8 +79,20 @@ const Chat = () => {
                     style={{
                         color: themeToken.mainColor
                     }}
-                    onClick={() => setShowChats(!showChats)}
+                    onClick={() => {
+                        setShowChats(!showChats)
+                        setNumberMessage(0)
+                    }}
                 />
+                {(!showChats && numberMessage !== 0) && <Row
+                    className={styles.notification}
+                >
+                    <div
+                        className={styles.notification_icon}
+                    >
+                        {numberMessage}
+                    </div>
+                </Row>}
             </Row>
 
             <Row

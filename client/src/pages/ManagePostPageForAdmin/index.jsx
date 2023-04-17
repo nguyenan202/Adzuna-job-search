@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { shortText } from "../ManagePostPage";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ModalDetailPost from "./ModalDetailPost";
 import SpinLoading from "../../components/SpinLoading";
+import MessagePage from "../../components/MessagePage";
 
 const ManagePostPageForAdmin = () => {
 
@@ -16,18 +17,13 @@ const ManagePostPageForAdmin = () => {
     const [postSelected, setPostSelected] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [keyReRender, setKeyReRender] = useState(0);
-    const [api, contextHolder] = notification.useNotification();
 
     const themeToken = theme.useToken().token;
     const token = useSelector(state => state.token);
-    const navigate = useNavigate();
+    const openNotificationWithIcon = useSelector(state => state.notification);
+    const user = useSelector(state => state.user);
 
-    const openNotificationWithIcon = (type, message) => {
-        api[type]({
-            message: message,
-            duration: 1
-        });
-    }
+    const canAccess = Boolean(user.UserPermissions.find(permission => permission.Permission.path === 'manage-post-admin'));
 
     useEffect(() => {
         const fetching = async () => {
@@ -124,6 +120,8 @@ const ManagePostPageForAdmin = () => {
     }))
 
     return (isLoading ? <SpinLoading height='calc(100vh - 66px)'/> :
+        (
+            canAccess ?
         <Row
             className={styles.container}
         >
@@ -155,9 +153,6 @@ const ManagePostPageForAdmin = () => {
                 </Row>
             </Row>
 
-            {/* Notification */}
-            {contextHolder}
-
             {/* Modal Detail Post */}
             {postSelected &&
                 <ModalDetailPost
@@ -174,7 +169,11 @@ const ManagePostPageForAdmin = () => {
                     }}
                 />
             }
-        </Row>
+        </Row> : 
+        <MessagePage
+            title={'403 Access Denied'}
+        />
+        )
     )
 }
 

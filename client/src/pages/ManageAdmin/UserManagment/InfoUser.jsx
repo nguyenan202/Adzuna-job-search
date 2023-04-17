@@ -5,6 +5,8 @@ import styles from './styles.module.scss';
 import MyFieldInput from '../../../components/MyFieldInput';
 import useMediaQuery from "../../../hooks/useMediaQuery";
 
+import MyTag from "../../../components/MyTag";
+
 const InfoUser = ({ user, setSelected }) => {
 
     const breakPointMobile = useMediaQuery('(max-width: 576px)');
@@ -27,6 +29,19 @@ const InfoUser = ({ user, setSelected }) => {
                     }}
                 />
             </Row>
+            {user.status === 0 && <Row
+                style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    marginTop: '1rem'
+                }}
+            >
+                <MyTag
+                    myColor='red'
+                    name='Đã khóa'
+                    style={{ padding: '0.25rem 1rem' }}
+                />
+            </Row>}
             <Row
                 className={styles.info}
             >

@@ -14,6 +14,27 @@
     z-index: 1;
     flex-direction: column;
 
+    .notification {
+      position: absolute;
+      color: red;
+      right: -0.5rem;
+      top: -0.5rem;
+      border: 1px solid red;
+      border-radius: 50%;
+      background-color: red;
+      width: 26px;
+      height: 26px;
+      justify-content: center;
+      align-items: center;
+
+      .notification_icon {
+        font-size: 1rem;
+        width: fit-content;
+        height: fit-content;
+        color: #fff;
+      }
+    }
+
     .list {
       display: block;
       max-height: 70vh;

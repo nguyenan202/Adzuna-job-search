@@ -14,6 +14,7 @@ import InfoCompany from "./InfoCompany";
 
 const CompanyManagment = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [dataSave, setDataSave] = useState([]);
     const [companies, setCompanies] = useState([]);
     const [userSelected, setUserSelected] = useState(null);
@@ -25,6 +26,7 @@ const CompanyManagment = () => {
     const themeToken = theme.useToken().token;
 
     useEffect(() => {
+        setIsLoading(true);
         axios.get(`${process.env.REACT_APP_API_URL}/company/all`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -33,8 +35,11 @@ const CompanyManagment = () => {
             .then(value => {
                 setCompanies([...value.data.companies]);
                 setDataSave([...value.data.companies])
-            });
-    }, [token])
+            })
+            .finally(() => {
+                setIsLoading(false);
+            })
+    }, [token, keyReRender])
 
     useEffect(() => {
         if (search === '') return setCompanies([...dataSave]);
@@ -162,6 +167,7 @@ const CompanyManagment = () => {
                             className={styles.table_sub}
                             columns={columns}
                             dataSource={data}
+                            loading={isLoading}
                         />
                     </Row>
                 </Row>
@@ -176,6 +182,8 @@ const CompanyManagment = () => {
                 <InfoCompany
                     company={selectedCompany}
                     setSelected={setSelectedCompany}
+                    keyReRender={keyReRender}
+                    setKeyReRender={setKeyReRender}
                 />
             }
         </Row>

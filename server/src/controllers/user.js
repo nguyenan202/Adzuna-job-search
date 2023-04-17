@@ -9,6 +9,7 @@ import User from "../models/user";
 import UserPermission from "../models/userPermission";
 import SettingPermission from '../models/settingPermission';
 import UserSettingPermission from '../models/userSettingPermission';
+import { io } from '../../src/index';
 
 const getAllUser = async (req, res) => {
     try {
@@ -447,6 +448,32 @@ const updatePasswordByEmail = async (req, res) => {
     }
 }
 
+const updateStatus = async (req, res) => {
+    try {
+        const {
+            id,
+            status
+        } = req.body;
+
+        const updatedRow = await User.update({
+            status
+        },{
+            where: {
+                id
+            }
+        })
+
+        if (updatedRow[0] !== 0) {
+            io.emit(`logout-user-${id}`)
+            return res.status(200).json({ status });
+        }
+
+        res.status(400).json({ message: 'Có lỗi, vui lòng thử lại sau' });
+    }catch (err) {
+        res.status(500).json({ message: err });
+    }
+}
+
 export {
     getAllUser,
     getUserById,
@@ -457,5 +484,6 @@ export {
     getPasswordByUserId,
     updatePassword,
     getUserByEmail,
-    updatePasswordByEmail
+    updatePasswordByEmail,
+    updateStatus
 }

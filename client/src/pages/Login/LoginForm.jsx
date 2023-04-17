@@ -4,7 +4,7 @@ import styles from './style.module.scss';
 import { useState } from "react";
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from "axios";
 
 import { setLogin } from "../../redux/store";
@@ -30,6 +30,7 @@ const LoginForm = ({ setIsLoading }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const tokenTheme = theme.useToken().token;
+    const openNotification = useSelector(state => state.notification);
 
     const togglePassword = () => {
         setIsShowPassword(!isShowPassword)
@@ -46,6 +47,11 @@ const LoginForm = ({ setIsLoading }) => {
                 const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, value);
 
                 const data = await response.data;
+
+                if (data.user.status === 0) {
+                    openNotification('error', 'Tài khoản của bạn bị khóa, liên hệ Admin để biết thêm chi tiết');
+                    return setIsLoading(false);
+                }
 
                 socket.emit(`first-mounted-${data.user.id}`);
                 socket.emit('user-online', data.user.id);

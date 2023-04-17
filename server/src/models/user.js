@@ -58,6 +58,10 @@ const User = sequelize.define('User', {
     verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: 0
+    },
+    status: {
+        type: DataTypes.TINYINT,
+        defaultValue: 1
     }
 })
 

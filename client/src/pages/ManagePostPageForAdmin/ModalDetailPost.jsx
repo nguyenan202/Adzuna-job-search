@@ -23,7 +23,7 @@ const ModalDetailPost = ({ post, isShow, setIsShow, openNotificationWithIcon, ke
     const addresses = post.PostAddresses.reduce((cur, next) => {
         return `${cur}• ${next.Address.name}\n`
     }, '')
-    console.log(post);
+
     const handleAccept = async () => {
 
         setIsLoadingAccepted(true);
@@ -41,9 +41,7 @@ const ModalDetailPost = ({ post, isShow, setIsShow, openNotificationWithIcon, ke
             if (response.data.status) {
                 openNotificationWithIcon('success', 'Duyệt đơn thành công');
                 setIsShow(false);
-                setTimeout(() => {
-                    setKeyReRender(keyReRender+1);
-                },1000)
+                setKeyReRender(keyReRender + 1);
             }
 
         } catch (err) {
@@ -73,8 +71,8 @@ const ModalDetailPost = ({ post, isShow, setIsShow, openNotificationWithIcon, ke
                 setIsShow(false);
                 setReason('');
                 setTimeout(() => {
-                    setKeyReRender(keyReRender+1);
-                },1500)
+                    setKeyReRender(keyReRender + 1);
+                }, 1500)
             }
 
         } catch (err) {
