@@ -6,7 +6,7 @@ Job Search webapp
     - Logout ✔️
     - Register ✔️
     - Third Login ✔️
-    - Reset Password
+    - Reset Password ✔️
 # Profile
     - Update/Delete profile image ✔️
     - Update profile ✔️
